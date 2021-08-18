@@ -811,8 +811,9 @@ describe('Unit Tests', () => {
             expect(fv._filters.length).toEqual(0)
             expect(fv._signal).toEqual('')
             const res = await fv.exchange('AMEX').index('S&P 500').signal('Wedge Down').scan()
-            expect(fv._filters.length).toEqual(0)
-            expect(fv._signal).toEqual('')
+            expect(fv._filters.length).toEqual(2)
+            expect(fv._filters).toEqual(['exch_amex', 'idx_sp500'])
+            expect(fv._signal).toEqual('ta_p_wedgedown')
             expect(mockAxios.history.get[0].params).toEqual({
                 f: 'exch_amex,idx_sp500',
                 s: 'ta_p_wedgedown',

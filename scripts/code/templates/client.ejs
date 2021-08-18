@@ -68,9 +68,6 @@ class FinVizScreener {
      */
     async scan() {
         const params = { f: this._filters.join(','), s: this._signal }
-        // reset
-        this._filters = []
-        this._signal = ''
         // fetch them symbolz
         const res = await axios.get(this._url, { params })
         const $ = cheerio.load(res.data)
