@@ -1075,5 +1075,5 @@ Scan for stocks
 
 **Returns**
 
-- **<code>Promise.&lt;Array.&lt;string&gt;&gt;</code>** : List of stock symbols
+- **<code>Promise.&lt;Array.&lt;string&gt;&gt;</code>** : List of stock tickers
 

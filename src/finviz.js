@@ -1839,11 +1839,11 @@ const floatMap = {
  * @typicalname fv
  * @example
  * const fv = new FinVizScreener()
- * const symbols = await fv
+ * const tickers = await fv
  *   .exchange('AMEX')
  *   .marketCap('Small ($300mln to $2bln)')
  *   .scan()
- * console.log(symbols)
+ * console.log(tickers)
  */
 class FinVizScreener {
     constructor() {
@@ -2782,15 +2782,13 @@ class FinVizScreener {
     /**
      * Scan for stocks
      *
-     * @returns {Promise<string[]>} List of stock symbols
+     * @returns {Promise<string[]>} List of stock tickers
      */
     async scan() {
         const params = { f: this._filters.join(','), s: this._signal }
-        // fetch them symbolz
         const res = await axios.get(this._url, { params })
         const $ = cheerio.load(res.data)
-        const symbols = $(selector).map((i, el) => $(el).text().trim()).get()
-        return symbols
+        return $(selector).map((i, el) => $(el).text().trim()).get()
     }
 } // class
 
