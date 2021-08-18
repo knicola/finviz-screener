@@ -1071,7 +1071,7 @@ TA Signal
 
 ### fv.scan() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
 
-Scan for stocks
+Scan for stocks. Will return only the first 1000 tickers available.
 
 **Returns**
 

@@ -2780,7 +2780,7 @@ class FinVizScreener {
     }
 
     /**
-     * Scan for stocks
+     * Scan for stocks. Will return only the first 1000 tickers available.
      *
      * @returns {Promise<string[]>} List of stock tickers
      */

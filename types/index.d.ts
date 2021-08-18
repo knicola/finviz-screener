@@ -398,7 +398,7 @@ export class FinVizScreener {
      */
     signal(signal: 'Top Gainers'|'Top Losers'|'New High'|'New Low'|'Most Volatile'|'Most Active'|'Unusual Volume'|'Overbought'|'Oversold'|'Downgrades'|'Upgrades'|'Earnings Before'|'Earnings After'|'Recent Insider Buying'|'Recent Insider Selling'|'Major News'|'Horizontal S/R'|'TL Resistance'|'TL Support'|'Wedge Up'|'Wedge Down'|'Triangle Ascending'|'Triangle Descending'|'Wedge'|'Channel Up'|'Channel Down'|'Channel'|'Double Top'|'Double Bottom'|'Multiple Top'|'Multiple Bottom'|'Head & Shoulders'|'Head & Shoulders Inverse'): this;
     /**
-     * Scan for stocks
+     * Scan for stocks. Will return only the first 1000 tickers available.
      * @returns List of stock tickers
      */
     scan(): Promise<Array<string>>;

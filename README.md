@@ -14,9 +14,12 @@ Using yarn:
 $ yarn add finviz-screener
 ```
 
+## API
+See [API Docs](./docs/API.md) file.
+
 ## Usage
 
-> **NOTE**: Currently, fetches results only from the first page which can have up to 1000 tickers.
+> **NOTE**: The client will return only the first 1000 tickers available.
 
 ```js
 const finviz = require('finviz-screener')
@@ -35,12 +38,6 @@ console.log(tickers) //=> [
 //   'RE','TUR','NED'
 // ]
 ```
-
-## API
-See [API Docs](API.md) file.
-
-## Development
-Most of FinViz client, tests, types and API docs are script generated. See [scripts](./scrpts/) folder for the scripts and templates.
 
 ## License
 

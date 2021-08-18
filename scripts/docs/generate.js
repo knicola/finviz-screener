@@ -4,7 +4,7 @@ const jsdoc2md = require('jsdoc-to-markdown')
 const fs = require('fs')
 const path = require('path')
 
-const outputFile = path.resolve('./API.md')
+const outputFile = path.resolve('./docs/API.md')
 
 if (fs.existsSync(outputFile)) {
     fs.rmSync(outputFile)
