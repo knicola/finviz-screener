@@ -18,6 +18,14 @@
     "docs/"
   ],
   "types": "types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/knicola/finviz-screener.git"
+  },
+  "bugs": {
+    "url": "https://github.com/knicola/finviz-screener/issues"
+  },
+  "homepage": "https://github.com/knicola/finviz-screener#readme",
   "scripts": {
     "lint": "eslint ./src",
     "coverage": "jest --coverage",
