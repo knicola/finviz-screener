@@ -9,5 +9,6 @@ const FinVizScreener = require('./finviz')
 function finviz() {
     return new FinVizScreener()
 }
+
 module.exports = finviz
 module.exports.FinVizScreener = FinVizScreener
