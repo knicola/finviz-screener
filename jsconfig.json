@@ -4,9 +4,8 @@
     "target": "es6"
   },
   "typeAcquisition": {
-    "include": [
-      "jest"
-    ]
+    "include": ["jest"],
+    "exclude": ["axios-mock-adapter"]
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules"]

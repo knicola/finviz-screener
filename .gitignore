@@ -61,6 +61,8 @@ jspm_packages/
 # demo files
 demo.js
 *.demo.js
+demo.mjs
+*.demo.mjs
 
 # cache files
 *.cache.*

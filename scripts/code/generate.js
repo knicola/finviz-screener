@@ -20,9 +20,9 @@ const dd = function() { // eslint-disable-line
 
 // them files
 const htmlCacheFile = path.resolve('scripts/cache/fvPage.cache.html')
-const clientTmplFile = path.resolve('scripts/templates/client.ejs')
+const clientTmplFile = path.resolve('scripts/code/templates/client.ejs')
 const clientOutFile = path.resolve('src/finviz.js')
-const testsTmplFile = path.resolve('scripts/templates/tests.ejs')
+const testsTmplFile = path.resolve('scripts/code/templates/tests.ejs')
 const testsOutFile = path.resolve('tests/finviz.spec.js')
 
 async function getHtml() {
@@ -93,9 +93,10 @@ void (async () => {
         funcs.push(func)
     })
 
-    // render client
-    const rendered = await ejs.renderFile(clientTmplFile, { funcs, signals })
-    fs.writeFileSync(clientOutFile, rendered, { encoding: 'utf8' })
+    // render client and tests
+    const opts = { encoding: 'utf8' }
+    const client = await ejs.renderFile(clientTmplFile, { funcs, signals })
+    fs.writeFileSync(clientOutFile, client, opts)
     const tests = await ejs.renderFile(testsTmplFile, { funcs, signals })
-    fs.writeFileSync(testsOutFile, tests, { encoding: 'utf8' })
+    fs.writeFileSync(testsOutFile, tests, opts)
 })()

@@ -1835,6 +1835,8 @@ const floatMap = {
 }
 
 /**
+ * @class
+ * @typicalname fv
  * @example
  * const fv = new FinVizScreener()
  * const symbols = await fv

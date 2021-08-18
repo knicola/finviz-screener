@@ -1,17 +1,30 @@
 {
-  "name": "finvizscreener",
+  "name": "finviz-screener",
   "version": "1.0.0",
-  "description": "",
+  "description": "FinViz screener library for Node.js",
+  "keywords": [
+    "FinViz",
+    "screener",
+    "stocks",
+    "trading",
+    "finance"
+  ],
   "author": "@knicola",
   "license": "MIT",
   "main": "src/index.js",
   "files": [
-    "src/"
+    "src/",
+    "types/"
   ],
+  "types": "types/index.d.ts",
   "scripts": {
     "lint": "eslint ./src",
     "coverage": "jest --coverage",
-    "test": "jest"
+    "test": "jest",
+    "generate:code": "node scripts/code/generate",
+    "generate:docs": "node scripts/docs/generate",
+    "generate:types": "node scripts/types/generate",
+    "build": "npm run generate:code && npm run generate:types && npm run generate:docs"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -20,10 +33,13 @@
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "axios-mock-adapter": "^1.20.0",
+    "change-case": "^4.1.2",
     "ejs": "^3.1.6",
     "eslint": "^7.32.0",
     "htmlparser2": "^6.1.0",
     "jest": "^27.0.6",
+    "jsdoc": "^3.6.7",
+    "jsdoc-to-markdown": "^7.0.1",
     "lodash": "^4.17.21"
   }
 }
