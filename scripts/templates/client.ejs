@@ -1,0 +1,80 @@
+'use strict'
+
+const axios = require('axios').default
+const cheerio = require('cheerio')
+const selector = '#screener-content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span'
+
+const signalsMap = <%- JSON.stringify(signals, null, 4).replace(/"/g, "'") %>
+<% funcs.forEach(function(func) { %>
+const <%- func.name %>Map = <%- JSON.stringify(
+        func.filter.values.reduce((res, val) => {
+            res[val.name] = val.value
+            return res
+        }, {}), null, 4).replace(/"/g, "'") %>
+<% }) %>
+/**
+ * @example
+ * const fv = new FinVizScreener()
+ * const symbols = await fv
+ *   .exchange('AMEX')
+ *   .marketCap('Small ($300mln to $2bln)')
+ *   .scan()
+ * console.log(symbols)
+ */
+class FinVizScreener {
+    constructor() {
+        /** @private */
+        this._url = 'https://finviz.com/screener.ashx?v=411'
+        /** @private */
+        this._signal = ''
+        /** @private */
+        this._filters = []
+    }
+<% funcs.forEach(function(func) { %>
+    /**
+     * <%- func.desc %>
+     *
+     * @param {<%- func.filter.values.map(f => `'${f.name}'`).join('|') %>} filter Filter
+     * @returns {this} this
+     */
+    <%- func.name %>(filter) {
+        if (! <%= func.name %>Map[filter]) {
+            throw Error('Unknown filter: ' + filter)
+        }
+        this._filters.push('<%- func.filter.name %>_' + <%= func.name %>Map[filter])
+        return this
+    }
+<% }) %>
+    /**
+     * TA Signal
+     *
+     * @param {<%- Object.keys(signals).map(s => `'${s}'`).join('|') %>} signal TA signal
+     * @returns {this} this
+     */
+    signal(signal) {
+        if (! signalsMap[signal]) {
+            throw Error('Unknown signal: ' + signal)
+        }
+        this._signal = signalsMap[signal]
+        return this
+    }
+
+    /**
+     * Scan for stocks
+     *
+     * @returns {Promise<string[]>} List of stock symbols
+     */
+    async scan() {
+        const params = { f: this._filters.join(','), s: this._signal }
+        // reset
+        this._filters = []
+        this._signal = ''
+        // fetch them symbolz
+        const res = await axios.get(this._url, { params })
+        const $ = cheerio.load(res.data)
+        const symbols = $(selector).map((i, el) => $(el).text().trim()).get()
+        return symbols
+    }
+} // class
+
+module.exports = FinVizScreener

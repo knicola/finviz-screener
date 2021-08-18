@@ -1,0 +1,61 @@
+'use strict'
+
+const FinVizScreener = require('../src')
+
+const axios = require('axios').default
+const MockAdapter = require('axios-mock-adapter').default
+const mockAxios = new MockAdapter(axios)
+const fs = require('fs')
+const path = require('path')
+const dummyFile = path.resolve('tests/finviz_screener.html')
+const html = fs.readFileSync(dummyFile, { encoding: 'utf8' })
+
+describe('Unit Tests', () => {
+    beforeAll(() => mockAxios.onAny().reply(200, html))
+    afterAll(() => mockAxios.reset())
+<% funcs.forEach(function(func) { _%>
+    describe('.<%- func.name %>()', () => {
+        it('should add filter value to the list', () => {
+            const fv = new FinVizScreener()
+            const expected = '<%- func.filter.name %>_<%- func.filter.values[0].value %>'
+            fv.<%- func.name %>('<%- func.filter.values[0].name %>')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = new FinVizScreener()
+            expect(() => fv.<%- func.name %>('Something Unkown')).toThrow()
+        }) // test
+    }) // group
+<% }) _%>
+    describe('.signal()', () => {
+        it('should add signal', () => {
+            const fv = new FinVizScreener()
+            <%_ const [key, value] = Object.entries(signals)[0] _%>
+            const expected = '<%- value %>'
+            fv.signal('<%- key %>')
+            expect(fv._signal).toEqual(expected)
+        }) // test
+        it('should throw if an unknown signal is provided', () => {
+            const fv = new FinVizScreener()
+            expect(() => fv.signal('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.scan()', () => {
+        it('should use filters and signal, call the finviz url and return a list of tickers', async () => {
+            const fv = new FinVizScreener()
+            expect(fv._filters.length).toEqual(0)
+            expect(fv._signal).toEqual('')
+            const res = await fv.exchange('AMEX').index('S&P 500').signal('Wedge Down').scan()
+            expect(fv._filters.length).toEqual(0)
+            expect(fv._signal).toEqual('')
+            expect(mockAxios.history.get[0].params).toEqual({
+                f: 'exch_amex,idx_sp500',
+                s: 'ta_p_wedgedown',
+            })
+            expect(res.length).toBe(1000)
+            expect(res).toEqual(
+                expect.arrayContaining(['A', 'AA', 'AAAU', 'AAC', 'AACG', 'AACIU'])
+            )
+        }) // test
+    }) // group
+}) // group
