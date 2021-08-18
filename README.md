@@ -16,6 +16,8 @@ $ yarn add finviz-screener
 
 ## Usage
 
+> **NOTE**: Currently, fetches results only from the first page which can have up to 1000 tickers.
+
 ```js
 const finviz = require('finviz-screener')
 // import finviz from 'finviz-screener'
@@ -38,7 +40,7 @@ console.log(tickers) //=> [
 See [API Docs](API.md) file.
 
 ## Development
-Most of the FinViz client, tests, types and API docs are script generated. See [scripts](./scrpts/) folder for the scripts and templates.
+Most of FinViz client, tests, types and API docs are script generated. See [scripts](./scrpts/) folder for the scripts and templates.
 
 ## License
 
