@@ -1,8 +1,6 @@
 'use strict'
 
-const axios = require('axios').default
-const cheerio = require('cheerio')
-const selector = '#screener-content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span'
+const FinVizScreener = require('./base')
 
 const signalsMap = <%- JSON.stringify(signals, null, 4).replace(/"/g, "'") %>
 <% funcs.forEach(function(func) { %>
@@ -11,67 +9,34 @@ const <%- func.name %>Map = <%- JSON.stringify(
             res[val.name] = val.value
             return res
         }, {}), null, 4).replace(/"/g, "'") %>
+<% }) _%>
+<% funcs.forEach(function(func) { %>
+/**
+ * <%- func.desc %>
+ *
+ * @param {<%- func.filter.values.map(f => `'${f.name}'`).join('|') %>} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.<%- func.name %> = function (filter) {
+    if (! <%= func.name %>Map[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('<%- func.filter.name %>_' + <%= func.name %>Map[filter])
+    return this
+}
 <% }) %>
 /**
- * @class
- * @typicalname fv
- * @example
- * const fv = new FinVizScreener()
- * const tickers = await fv
- *   .exchange('AMEX')
- *   .marketCap('Small ($300mln to $2bln)')
- *   .scan()
- * console.log(tickers)
+ * TA Signal
+ *
+ * @param {<%- Object.keys(signals).map(s => `'${s}'`).join('|') %>} signal TA signal
+ * @returns {this} this
  */
-class FinVizScreener {
-    constructor() {
-        /** @private */
-        this._url = 'https://finviz.com/screener.ashx?v=411'
-        /** @private */
-        this._signal = ''
-        /** @private */
-        this._filters = []
+FinVizScreener.prototype.signal = function (signal) {
+    if (! signalsMap[signal]) {
+        throw Error('Unknown signal: ' + signal)
     }
-<% funcs.forEach(function(func) { %>
-    /**
-     * <%- func.desc %>
-     *
-     * @param {<%- func.filter.values.map(f => `'${f.name}'`).join('|') %>} filter Filter
-     * @returns {this} this
-     */
-    <%- func.name %>(filter) {
-        if (! <%= func.name %>Map[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('<%- func.filter.name %>_' + <%= func.name %>Map[filter])
-        return this
-    }
-<% }) %>
-    /**
-     * TA Signal
-     *
-     * @param {<%- Object.keys(signals).map(s => `'${s}'`).join('|') %>} signal TA signal
-     * @returns {this} this
-     */
-    signal(signal) {
-        if (! signalsMap[signal]) {
-            throw Error('Unknown signal: ' + signal)
-        }
-        this._signal = signalsMap[signal]
-        return this
-    }
-
-    /**
-     * Scan for stocks. Will return only the first 1000 tickers available.
-     *
-     * @returns {Promise<string[]>} List of stock tickers
-     */
-    async scan() {
-        const params = { f: this._filters.join(','), s: this._signal }
-        const res = await axios.get(this._url, { params })
-        const $ = cheerio.load(res.data)
-        return $(selector).map((i, el) => $(el).text().trim()).get()
-    }
-} // class
+    this._signal = signalsMap[signal]
+    return this
+}
 
 module.exports = FinVizScreener

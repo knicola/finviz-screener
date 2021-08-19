@@ -8,6 +8,7 @@
 
 
 * [FinVizScreener](#FinVizScreener)
+    * [fv.scan()](#FinVizScreener+scan) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
     * [fv.exchange(filter)](#FinVizScreener+exchange) ⇒ <code>this</code>
     * [fv.index(filter)](#FinVizScreener+index) ⇒ <code>this</code>
     * [fv.sector(filter)](#FinVizScreener+sector) ⇒ <code>this</code>
@@ -74,7 +75,17 @@
     * [fv.sharesOutstanding(filter)](#FinVizScreener+sharesOutstanding) ⇒ <code>this</code>
     * [fv.float(filter)](#FinVizScreener+float) ⇒ <code>this</code>
     * [fv.signal(signal)](#FinVizScreener+signal) ⇒ <code>this</code>
-    * [fv.scan()](#FinVizScreener+scan) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+
+
+<br><a name="FinVizScreener+scan"></a>
+
+### fv.scan() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+
+Scan for stocks. Will return only the first 1000 tickers available.
+
+**Returns**
+
+- **<code>Promise.&lt;Array.&lt;string&gt;&gt;</code>** : List of stock tickers
 
 
 <br><a name="FinVizScreener+exchange"></a>
@@ -1065,15 +1076,4 @@ TA Signal
 **Returns**
 
 - **<code>this</code>** : this
-
-
-<br><a name="FinVizScreener+scan"></a>
-
-### fv.scan() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
-
-Scan for stocks. Will return only the first 1000 tickers available.
-
-**Returns**
-
-- **<code>Promise.&lt;Array.&lt;string&gt;&gt;</code>** : List of stock tickers
 
