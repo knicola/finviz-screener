@@ -15,7 +15,6 @@ $ yarn add finviz-screener
 ```
 
 ## Usage
-> By default, the client will fetch only the first page of tickers (~1000 per page). To fetch more pages, increase the `pageLimit` option. Set `pageLimit = 0` to fetch all available pages.
 ```js
 // ES6
 import finviz from 'finviz-screener'
@@ -40,9 +39,10 @@ const tickers = await finviz(options)
 
 console.log(tickers) //=> ['AAPL', 'MSFT', 'IBM', ... ]
 ```
+> By default, the client will fetch only the first page of tickers (~1000 per page). To fetch more pages, increase the `pageLimit` option. Set `pageLimit = 0` to fetch all available pages.
 
 ## API
-See [docs/API.md]([docs/API.md](docs/API.md)) file for the full list of available methods.
+See [docs/API.md](docs/API.md) file for the full list of available methods.
 
 ## Development
 This library is built using [file generators](scripts/). They do most of the heavy lifting around here by generating the "filter" [methods](src/finviz.js) and [tests](tests/finviz.spec.js), the [typescript definitions](types/index.d.ts) and the [API documentation](docs/API.md) 🎉.
