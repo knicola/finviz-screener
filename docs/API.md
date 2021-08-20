@@ -1,5 +1,9 @@
 # API Docs
 
+## Index
+* [FinVizScreener](#FinVizScreener)
+* [Type Definitions](#TypeDefinitions)
+
 
 <br><a name="FinVizScreener"></a>
 
@@ -8,6 +12,8 @@
 
 
 * [FinVizScreener](#FinVizScreener)
+    * [new FinVizScreener(options)](#new_FinVizScreener_new)
+    * [fv.options](#FinVizScreener+options) : [<code>Options</code>](#Options)
     * [fv.scan()](#FinVizScreener+scan) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
     * [fv.exchange(filter)](#FinVizScreener+exchange) ⇒ <code>this</code>
     * [fv.index(filter)](#FinVizScreener+index) ⇒ <code>this</code>
@@ -77,11 +83,42 @@
     * [fv.signal(signal)](#FinVizScreener+signal) ⇒ <code>this</code>
 
 
+<br><a name="new_FinVizScreener_new"></a>
+
+### new FinVizScreener(options)
+
+**Arguments**
+
+- **options ([<code>Options</code>](#Options))** : Options
+
+
+
+**Example**  
+```js
+const fv = new FinVizScreener()
+
+const tickers = await fv
+    .averageVolume('Over 2M')
+    .sector('Technology')
+    .price('Over $50')
+    .scan()
+
+console.log(tickers) //=> ['AAPL', 'MSFT', 'IBM', ... ]
+```
+
+<br><a name="FinVizScreener+options"></a>
+
+### fv.options : [<code>Options</code>](#Options)
+
+Client instance options
+
+
+
 <br><a name="FinVizScreener+scan"></a>
 
 ### fv.scan() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
 
-Scan for stocks. Will return only the first 1000 tickers available.
+Scan for stocks.
 
 **Returns**
 
@@ -1076,4 +1113,19 @@ TA Signal
 **Returns**
 
 - **<code>this</code>** : this
+
+
+<br><a name="TypeDefinitions"></a>
+
+## Type Definitions
+
+<br><a name="Options"></a>
+
+## Options : <code>object</code>
+
+
+**Properties**
+
+- **pageLimit (<code>number</code>)** : Maximum number of pages to fetch. Set to `0` to disable. Default is 1
+- **requestTimeout (<code>number</code>)** : Number of milliseconds to wait between requests. Default is 1000
 

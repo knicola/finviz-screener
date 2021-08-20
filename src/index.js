@@ -3,12 +3,25 @@
 const FinVizScreener = require('./finviz')
 
 /**
- * @function
- * @returns {FinVizScreener} FinVizScreener instance
+ * @typedef {import('./base').Options} Options
  */
-function finviz() {
-    return new FinVizScreener()
+/**
+ * @function
+ * @param {Options} options Options
+ * @returns {FinVizScreener} FinVizScreener instance
+ * @example
+ * const tickers = await finviz()
+ *     .averageVolume('Over 2M')
+ *     .sector('Technology')
+ *     .price('Over $50')
+ *     .scan()
+ *
+ * console.log(tickers) //=> ['AAPL', 'MSFT', 'IBM', ... ]
+ */
+function finviz(options) {
+    return new FinVizScreener(options)
 }
 
+finviz.FinVizScreener = FinVizScreener
+
 module.exports = finviz
-module.exports.FinVizScreener = FinVizScreener
