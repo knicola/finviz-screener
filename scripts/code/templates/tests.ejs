@@ -1,32 +1,32 @@
 'use strict'
 
-const FinVizScreener = require('../src')
+const finviz = require('../src')
 
 describe('FinVizScreener - Extended', () => {
 <% funcs.forEach(function(func) { _%>
     describe('.<%- func.name %>()', () => {
         it('should add filter value to the list', () => {
-            const fv = new FinVizScreener()
+            const fv = finviz()
             const expected = '<%- func.filter.name %>_<%- func.filter.values[0].value %>'
             fv.<%- func.name %>('<%- func.filter.values[0].name %>')
             expect(fv._filters).toContain(expected)
         }) // test
         it('should throw if an unknown filter is provided', () => {
-            const fv = new FinVizScreener()
-            expect(() => fv.<%- func.name %>('Something Unkown')).toThrow()
+            const fv = finviz()
+            expect(() => fv.<%- func.name %>('Something Unknown')).toThrow()
         }) // test
     }) // group
 <% }) _%>
     describe('.signal()', () => {
         it('should add signal', () => {
-            const fv = new FinVizScreener()
+            const fv = finviz()
             <%_ const [key, value] = Object.entries(signals)[0] _%>
             const expected = '<%- value %>'
             fv.signal('<%- key %>')
             expect(fv._signal).toEqual(expected)
         }) // test
         it('should throw if an unknown signal is provided', () => {
-            const fv = new FinVizScreener()
+            const fv = finviz()
             expect(() => fv.signal('Something Unknown')).toThrow()
         }) // test
     }) // group
