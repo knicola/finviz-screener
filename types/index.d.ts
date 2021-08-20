@@ -1,6 +1,29 @@
-export default function finviz(): FinVizScreener;
+export default function finviz(options: Options): FinVizScreener;
 
 export class FinVizScreener {
+    /**
+     * @param options Options
+     * @example
+     * const fv = new FinVizScreener()
+     * 
+     * const tickers = await fv
+     *     .averageVolume('Over 2M')
+     *     .sector('Technology')
+     *     .price('Over $50')
+     *     .scan()
+     * 
+     * console.log(tickers) //=> ['AAPL', 'MSFT', 'IBM', ... ]
+     */
+    constructor(options: Options)
+    /**
+     * Client instance options
+     */
+    options: Options;
+    /**
+     * Scan for stocks.
+     * @returns List of stock tickers
+     */
+    scan(): Promise<Array<string>>;
     /**
      * Stock Exchange at which a stock is listed.
      * @param filter Filter
@@ -397,9 +420,14 @@ export class FinVizScreener {
      * @returns this
      */
     signal(signal: 'Top Gainers'|'Top Losers'|'New High'|'New Low'|'Most Volatile'|'Most Active'|'Unusual Volume'|'Overbought'|'Oversold'|'Downgrades'|'Upgrades'|'Earnings Before'|'Earnings After'|'Recent Insider Buying'|'Recent Insider Selling'|'Major News'|'Horizontal S/R'|'TL Resistance'|'TL Support'|'Wedge Up'|'Wedge Down'|'Triangle Ascending'|'Triangle Descending'|'Wedge'|'Channel Up'|'Channel Down'|'Channel'|'Double Top'|'Double Bottom'|'Multiple Top'|'Multiple Bottom'|'Head & Shoulders'|'Head & Shoulders Inverse'): this;
-    /**
-     * Scan for stocks. Will return only the first 1000 tickers available.
-     * @returns List of stock tickers
-     */
-    scan(): Promise<Array<string>>;
 }
+export type Options = {
+    /**
+     * Maximum number of pages to fetch. Set to `0` to disable. Default is 1
+     */
+    pageLimit: number;
+    /**
+     * Number of milliseconds to wait between requests. Default is 1000
+     */
+    requestTimeout: number;
+};

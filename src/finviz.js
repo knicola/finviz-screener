@@ -1,8 +1,6 @@
 'use strict'
 
-const axios = require('axios').default
-const cheerio = require('cheerio')
-const selector = '#screener-content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span'
+const FinVizScreener = require('./base')
 
 const signalsMap = {
     'Top Gainers': 'ta_topgainers',
@@ -1835,961 +1833,927 @@ const floatMap = {
 }
 
 /**
- * @class
- * @typicalname fv
- * @example
- * const fv = new FinVizScreener()
- * const tickers = await fv
- *   .exchange('AMEX')
- *   .marketCap('Small ($300mln to $2bln)')
- *   .scan()
- * console.log(tickers)
+ * Stock Exchange at which a stock is listed.
+ *
+ * @param {'AMEX'|'NASDAQ'|'NYSE'} filter Filter
+ * @returns {this} this
  */
-class FinVizScreener {
-    constructor() {
-        /** @private */
-        this._url = 'https://finviz.com/screener.ashx?v=411'
-        /** @private */
-        this._signal = ''
-        /** @private */
-        this._filters = []
-    }
-
-    /**
-     * Stock Exchange at which a stock is listed.
-     *
-     * @param {'AMEX'|'NASDAQ'|'NYSE'} filter Filter
-     * @returns {this} this
-     */
-    exchange(filter) {
-        if (! exchangeMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('exch_' + exchangeMap[filter])
-        return this
-    }
-
-    /**
-     * A major index membership of a stock.
-     *
-     * @param {'S&P 500'|'DJIA'} filter Filter
-     * @returns {this} this
-     */
-    index(filter) {
-        if (! indexMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('idx_' + indexMap[filter])
-        return this
-    }
-
-    /**
-     * The sector which a stock belongs to.
-     *
-     * @param {'Basic Materials'|'Communication Services'|'Consumer Cyclical'|'Consumer Defensive'|'Energy'|'Financial'|'Healthcare'|'Industrials'|'Real Estate'|'Technology'|'Utilities'} filter Filter
-     * @returns {this} this
-     */
-    sector(filter) {
-        if (! sectorMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sec_' + sectorMap[filter])
-        return this
-    }
-
-    /**
-     * The industry which a stock belongs to.
-     *
-     * @param {'Stocks only (ex-Funds)'|'Exchange Traded Fund'|'Advertising Agencies'|'Aerospace & Defense'|'Agricultural Inputs'|'Airlines'|'Airports & Air Services'|'Aluminum'|'Apparel Manufacturing'|'Apparel Retail'|'Asset Management'|'Auto Manufacturers'|'Auto Parts'|'Auto & Truck Dealerships'|'Banks - Diversified'|'Banks - Regional'|'Beverages - Brewers'|'Beverages - Non-Alcoholic'|'Beverages - Wineries & Distilleries'|'Biotechnology'|'Broadcasting'|'Building Materials'|'Building Products & Equipment'|'Business Equipment & Supplies'|'Capital Markets'|'Chemicals'|'Closed-End Fund - Debt'|'Closed-End Fund - Equity'|'Closed-End Fund - Foreign'|'Coking Coal'|'Communication Equipment'|'Computer Hardware'|'Confectioners'|'Conglomerates'|'Consulting Services'|'Consumer Electronics'|'Copper'|'Credit Services'|'Department Stores'|'Diagnostics & Research'|'Discount Stores'|'Drug Manufacturers - General'|'Drug Manufacturers - Specialty & Generic'|'Education & Training Services'|'Electrical Equipment & Parts'|'Electronic Components'|'Electronic Gaming & Multimedia'|'Electronics & Computer Distribution'|'Engineering & Construction'|'Entertainment'|'Exchange Traded Fund'|'Farm & Heavy Construction Machinery'|'Farm Products'|'Financial Conglomerates'|'Financial Data & Stock Exchanges'|'Food Distribution'|'Footwear & Accessories'|'Furnishings, Fixtures & Appliances'|'Gambling'|'Gold'|'Grocery Stores'|'Healthcare Plans'|'Health Information Services'|'Home Improvement Retail'|'Household & Personal Products'|'Industrial Distribution'|'Information Technology Services'|'Infrastructure Operations'|'Insurance Brokers'|'Insurance - Diversified'|'Insurance - Life'|'Insurance - Property & Casualty'|'Insurance - Reinsurance'|'Insurance - Specialty'|'Integrated Freight & Logistics'|'Internet Content & Information'|'Internet Retail'|'Leisure'|'Lodging'|'Lumber & Wood Production'|'Luxury Goods'|'Marine Shipping'|'Medical Care Facilities'|'Medical Devices'|'Medical Distribution'|'Medical Instruments & Supplies'|'Metal Fabrication'|'Mortgage Finance'|'Oil & Gas Drilling'|'Oil & Gas E&P'|'Oil & Gas Equipment & Services'|'Oil & Gas Integrated'|'Oil & Gas Midstream'|'Oil & Gas Refining & Marketing'|'Other Industrial Metals & Mining'|'Other Precious Metals & Mining'|'Packaged Foods'|'Packaging & Containers'|'Paper & Paper Products'|'Personal Services'|'Pharmaceutical Retailers'|'Pollution & Treatment Controls'|'Publishing'|'Railroads'|'Real Estate - Development'|'Real Estate - Diversified'|'Real Estate Services'|'Recreational Vehicles'|'REIT - Diversified'|'REIT - Healthcare Facilities'|'REIT - Hotel & Motel'|'REIT - Industrial'|'REIT - Mortgage'|'REIT - Office'|'REIT - Residential'|'REIT - Retail'|'REIT - Specialty'|'Rental & Leasing Services'|'Residential Construction'|'Resorts & Casinos'|'Restaurants'|'Scientific & Technical Instruments'|'Security & Protection Services'|'Semiconductor Equipment & Materials'|'Semiconductors'|'Shell Companies'|'Silver'|'Software - Application'|'Software - Infrastructure'|'Solar'|'Specialty Business Services'|'Specialty Chemicals'|'Specialty Industrial Machinery'|'Specialty Retail'|'Staffing & Employment Services'|'Steel'|'Telecom Services'|'Textile Manufacturing'|'Thermal Coal'|'Tobacco'|'Tools & Accessories'|'Travel Services'|'Trucking'|'Uranium'|'Utilities - Diversified'|'Utilities - Independent Power Producers'|'Utilities - Regulated Electric'|'Utilities - Regulated Gas'|'Utilities - Regulated Water'|'Utilities - Renewable'|'Waste Management'} filter Filter
-     * @returns {this} this
-     */
-    industry(filter) {
-        if (! industryMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ind_' + industryMap[filter])
-        return this
-    }
-
-    /**
-     * The country where company of selected stock is based.
-     *
-     * @param {'USA'|'Foreign (ex-USA)'|'Asia'|'Europe'|'Latin America'|'BRIC'|'Argentina'|'Australia'|'Bahamas'|'Belgium'|'BeNeLux'|'Bermuda'|'Brazil'|'Canada'|'Cayman Islands'|'Chile'|'China'|'China & Hong Kong'|'Colombia'|'Cyprus'|'Denmark'|'Finland'|'France'|'Germany'|'Greece'|'Hong Kong'|'Hungary'|'Iceland'|'India'|'Indonesia'|'Ireland'|'Israel'|'Italy'|'Japan'|'Kazakhstan'|'Luxembourg'|'Malaysia'|'Malta'|'Mexico'|'Monaco'|'Netherlands'|'New Zealand'|'Norway'|'Panama'|'Peru'|'Philippines'|'Portugal'|'Russia'|'Singapore'|'South Africa'|'South Korea'|'Spain'|'Sweden'|'Switzerland'|'Taiwan'|'Turkey'|'United Arab Emirates'|'United Kingdom'|'Uruguay'} filter Filter
-     * @returns {this} this
-     */
-    country(filter) {
-        if (! countryMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('geo_' + countryMap[filter])
-        return this
-    }
-
-    /**
-     * Equals The total dollar market value of all of a company's outstanding shares.
-     *
-     * @param {'Mega ($200bln and more)'|'Large ($10bln to $200bln)'|'Mid ($2bln to $10bln)'|'Small ($300mln to $2bln)'|'Micro ($50mln to $300mln)'|'Nano (under $50mln)'|'+Large (over $10bln)'|'+Mid (over $2bln)'|'+Small (over $300mln)'|'+Micro (over $50mln)'|'-Large (under $200bln)'|'-Mid (under $10bln)'|'-Small (under $2bln)'|'-Micro (under $300mln)'} filter Filter
-     * @returns {this} this
-     */
-    marketCap(filter) {
-        if (! marketCapMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('cap_' + marketCapMap[filter])
-        return this
-    }
-
-    /**
-     * A valuation ratio of a company's current share price compared to its per-share earnings (ttm).
-     *
-     * @param {'Low (<15)'|'Profitable (>0)'|'High (>50)'|'Under 5'|'Under 10'|'Under 15'|'Under 20'|'Under 25'|'Under 30'|'Under 35'|'Under 40'|'Under 45'|'Under 50'|'Over 5'|'Over 10'|'Over 15'|'Over 20'|'Over 25'|'Over 30'|'Over 35'|'Over 40'|'Over 45'|'Over 50'} filter Filter
-     * @returns {this} this
-     */
-    pe(filter) {
-        if (! peMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_pe_' + peMap[filter])
-        return this
-    }
-
-    /**
-     * A measure of the price-to-earnings ratio using forecasted earnings for the P/E calculation. Value for next fiscal year.
-     *
-     * @param {'Low (<15)'|'Profitable (>0)'|'High (>50)'|'Under 5'|'Under 10'|'Under 15'|'Under 20'|'Under 25'|'Under 30'|'Under 35'|'Under 40'|'Under 45'|'Under 50'|'Over 5'|'Over 10'|'Over 15'|'Over 20'|'Over 25'|'Over 30'|'Over 35'|'Over 40'|'Over 45'|'Over 50'} filter Filter
-     * @returns {this} this
-     */
-    forwardPe(filter) {
-        if (! forwardPeMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_fpe_' + forwardPeMap[filter])
-        return this
-    }
-
-    /**
-     * A ratio used to determine a stock's value while taking into account earnings growth.
-     *
-     * @param {'Low (<1)'|'High (>2)'|'Under 1'|'Under 2'|'Under 3'|'Over 1'|'Over 2'|'Over 3'} filter Filter
-     * @returns {this} this
-     */
-    peg(filter) {
-        if (! pegMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_peg_' + pegMap[filter])
-        return this
-    }
-
-    /**
-     * P/S number reflects the value placed on sales by the market. It is calculated by dividing the current closing price of the stock by the dollar-sales value per share.
-     *
-     * @param {'Low (<1)'|'High (>10)'|'Under 1'|'Under 2'|'Under 3'|'Under 4'|'Under 5'|'Under 6'|'Under 7'|'Under 8'|'Under 9'|'Under 10'|'Over 1'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 6'|'Over 7'|'Over 8'|'Over 9'|'Over 10'} filter Filter
-     * @returns {this} this
-     */
-    ps(filter) {
-        if (! psMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_ps_' + psMap[filter])
-        return this
-    }
-
-    /**
-     * A ratio used to compare a stock's market value to its book value. It is calculated by dividing the current closing price of the stock by the latest quarter's book value per share.
-     *
-     * @param {'Low (<1)'|'High (>5)'|'Under 1'|'Under 2'|'Under 3'|'Under 4'|'Under 5'|'Under 6'|'Under 7'|'Under 8'|'Under 9'|'Under 10'|'Over 1'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 6'|'Over 7'|'Over 8'|'Over 9'|'Over 10'} filter Filter
-     * @returns {this} this
-     */
-    pb(filter) {
-        if (! pbMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_pb_' + pbMap[filter])
-        return this
-    }
-
-    /**
-     * A ratio used to compare a stock's market value to its cash assets. It is calculated by dividing the current closing price of the stock by the latest quarter's cash per share.
-     *
-     * @param {'Low (<3)'|'High (>50)'|'Under 1'|'Under 2'|'Under 3'|'Under 4'|'Under 5'|'Under 6'|'Under 7'|'Under 8'|'Under 9'|'Under 10'|'Over 1'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 6'|'Over 7'|'Over 8'|'Over 9'|'Over 10'|'Over 20'|'Over 30'|'Over 40'|'Over 50'} filter Filter
-     * @returns {this} this
-     */
-    priceCash(filter) {
-        if (! priceCashMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_pc_' + priceCashMap[filter])
-        return this
-    }
-
-    /**
-     * A valuation metric that compares a company's market price to its level of annual free cash flow.
-     *
-     * @param {'Low (<15)'|'High (>50)'|'Under 5'|'Under 10'|'Under 15'|'Under 20'|'Under 25'|'Under 30'|'Under 35'|'Under 40'|'Under 45'|'Under 50'|'Under 60'|'Under 70'|'Under 80'|'Under 90'|'Under 100'|'Over 5'|'Over 10'|'Over 15'|'Over 20'|'Over 25'|'Over 30'|'Over 35'|'Over 40'|'Over 45'|'Over 50'|'Over 60'|'Over 70'|'Over 80'|'Over 90'|'Over 100'} filter Filter
-     * @returns {this} this
-     */
-    priceFreeCashFlow(filter) {
-        if (! priceFreeCashFlowMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_pfcf_' + priceFreeCashFlowMap[filter])
-        return this
-    }
-
-    /**
-     * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Value for current fiscal year.
-     *
-     * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    epsGrowththisYear(filter) {
-        if (! epsGrowththisYearMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_epsyoy_' + epsGrowththisYearMap[filter])
-        return this
-    }
-
-    /**
-     * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Estimate for next fiscal year.
-     *
-     * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    epsGrowthnextYear(filter) {
-        if (! epsGrowthnextYearMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_epsyoy1_' + epsGrowthnextYearMap[filter])
-        return this
-    }
-
-    /**
-     * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Annual growth over past 5 years.
-     *
-     * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    epsGrowthpast5Years(filter) {
-        if (! epsGrowthpast5YearsMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_eps5years_' + epsGrowthpast5YearsMap[filter])
-        return this
-    }
-
-    /**
-     * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Long term annual growth estimate.
-     *
-     * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (<10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    epsGrowthnext5Years(filter) {
-        if (! epsGrowthnext5YearsMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_estltgrowth_' + epsGrowthnext5YearsMap[filter])
-        return this
-    }
-
-    /**
-     * Annual growth over past 5 years.
-     *
-     * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    salesGrowthpast5Years(filter) {
-        if (! salesGrowthpast5YearsMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_sales5years_' + salesGrowthpast5YearsMap[filter])
-        return this
-    }
-
-    /**
-     * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Quarter over quarter growth.
-     *
-     * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    epsGrowthqtrOverQtr(filter) {
-        if (! epsGrowthqtrOverQtrMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_epsqoq_' + epsGrowthqtrOverQtrMap[filter])
-        return this
-    }
-
-    /**
-     * Quarter over quarter growth.
-     *
-     * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    salesGrowthqtrOverQtr(filter) {
-        if (! salesGrowthqtrOverQtrMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_salesqoq_' + salesGrowthqtrOverQtrMap[filter])
-        return this
-    }
-
-    /**
-     * The dividend yield equals the annual dividend per share divided by the stock’s price. This measurement tells what percentage return a company pays out to shareholders in the form of dividends.
-     *
-     * @param {'None (0%)'|'Positive (>0%)'|'High (>5%)'|'Very High (>10%)'|'Over 1%'|'Over 2%'|'Over 3%'|'Over 4%'|'Over 5%'|'Over 6%'|'Over 7%'|'Over 8%'|'Over 9%'|'Over 10%'} filter Filter
-     * @returns {this} this
-     */
-    dividendYield(filter) {
-        if (! dividendYieldMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_div_' + dividendYieldMap[filter])
-        return this
-    }
-
-    /**
-     * An indicator of how profitable a company is relative to its total assets. ROA gives an idea as to how efficient management is at using its assets to generate earnings. Calculated by dividing a company's annual earnings by its total assets, ROA is displayed as a percentage.
-     *
-     * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Positive (>15%)'|'Very Negative (<-15%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
-     * @returns {this} this
-     */
-    returnOnAssets(filter) {
-        if (! returnOnAssetsMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_roa_' + returnOnAssetsMap[filter])
-        return this
-    }
-
-    /**
-     * A measure of a corporation's profitability that reveals how much profit a company generates with the money shareholders have invested. Calculated as Net Income / Shareholder's Equity.
-     *
-     * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Positive (>30%)'|'Very Negative (<-15%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
-     * @returns {this} this
-     */
-    returnOnEquity(filter) {
-        if (! returnOnEquityMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_roe_' + returnOnEquityMap[filter])
-        return this
-    }
-
-    /**
-     * Performance measure used to evaluate the efficiency of an investment or to compare the efficiency of a number of different investments. To calculate ROI, the benefit (return) of an investment is divided by the cost of the investment: (Gain from Investment - Cost of Investment) / Cost of Investment.
-     *
-     * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Positive (>25%)'|'Very Negative (<-10%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
-     * @returns {this} this
-     */
-    returnOnInvestment(filter) {
-        if (! returnOnInvestmentMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_roi_' + returnOnInvestmentMap[filter])
-        return this
-    }
-
-    /**
-     * A liquidity ratio that measures a company's ability to pay short-term obligations. Calculated as Current Assets / Current Liabilities.
-     *
-     * @param {'High (>3)'|'Low (<1)'|'Under 1'|'Under 0.5'|'Over 0.5'|'Over 1'|'Over 1.5'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 10'} filter Filter
-     * @returns {this} this
-     */
-    currentRatio(filter) {
-        if (! currentRatioMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_curratio_' + currentRatioMap[filter])
-        return this
-    }
-
-    /**
-     * An indicator of a company's short-term liquidity. The quick ratio measures a company's ability to meet its short-term obligations with its most liquid assets. The higher the quick ratio, the better the position of the company. Calculated as (Current Assets - Inventories) / Current Liabilities.
-     *
-     * @param {'High (>3)'|'Low (<0.5)'|'Under 1'|'Under 0.5'|'Over 0.5'|'Over 1'|'Over 1.5'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 10'} filter Filter
-     * @returns {this} this
-     */
-    quickRatio(filter) {
-        if (! quickRatioMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_quickratio_' + quickRatioMap[filter])
-        return this
-    }
-
-    /**
-     * A measure of a company's financial leverage calculated by dividing its long term debt by stockholders' equity. It indicates what proportion of equity and debt the company is using to finance its assets.
-     *
-     * @param {'High (>0.5)'|'Low (<0.1)'|'Under 1'|'Under 0.9'|'Under 0.8'|'Under 0.7'|'Under 0.6'|'Under 0.5'|'Under 0.4'|'Under 0.3'|'Under 0.2'|'Under 0.1'|'Over 0.1'|'Over 0.2'|'Over 0.3'|'Over 0.4'|'Over 0.5'|'Over 0.6'|'Over 0.7'|'Over 0.8'|'Over 0.9'|'Over 1'} filter Filter
-     * @returns {this} this
-     */
-    ltDebtEquity(filter) {
-        if (! ltDebtEquityMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_ltdebteq_' + ltDebtEquityMap[filter])
-        return this
-    }
-
-    /**
-     * A measure of a company's financial leverage calculated by dividing its liabilities by stockholders' equity. It indicates what proportion of equity and debt the company is using to finance its assets.
-     *
-     * @param {'High (>0.5)'|'Low (<0.1)'|'Under 1'|'Under 0.9'|'Under 0.8'|'Under 0.7'|'Under 0.6'|'Under 0.5'|'Under 0.4'|'Under 0.3'|'Under 0.2'|'Under 0.1'|'Over 0.1'|'Over 0.2'|'Over 0.3'|'Over 0.4'|'Over 0.5'|'Over 0.6'|'Over 0.7'|'Over 0.8'|'Over 0.9'|'Over 1'} filter Filter
-     * @returns {this} this
-     */
-    debtEquity(filter) {
-        if (! debtEquityMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_debteq_' + debtEquityMap[filter])
-        return this
-    }
-
-    /**
-     * A company's total sales revenue minus its cost of goods sold, divided by the total sales revenue, expressed as a percentage. The gross margin represents the percent of total sales revenue that the company retains after incurring the direct costs associated with producing the goods and services sold by a company. The higher the percentage, the more the company retains on each dollar of sales to service its other costs and obligations.
-     *
-     * @param {'Positive (>0%)'|'Negative (<0%)'|'High (>50%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 45%'|'Under 40%'|'Under 35%'|'Under 30%'|'Under 25%'|'Under 20%'|'Under 15%'|'Under 10%'|'Under 5%'|'Under 0%'|'Under -10%'|'Under -20%'|'Under -30%'|'Under -50%'|'Under -70%'|'Under -100%'|'Over 0%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'|'Over 35%'|'Over 40%'|'Over 45%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
-     * @returns {this} this
-     */
-    grossMargin(filter) {
-        if (! grossMarginMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_grossmargin_' + grossMarginMap[filter])
-        return this
-    }
-
-    /**
-     * Operating margin is a measurement of what proportion of a company's revenue is left over after paying for variable costs of production such as wages, raw materials, etc. A healthy operating margin is required for a company to be able to pay for its fixed costs, such as interest on debt. Calculated as Operating Income / Net Sales.
-     *
-     * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Negative (<-20%)'|'High (>25%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 45%'|'Under 40%'|'Under 35%'|'Under 30%'|'Under 25%'|'Under 20%'|'Under 15%'|'Under 10%'|'Under 5%'|'Under 0%'|'Under -10%'|'Under -20%'|'Under -30%'|'Under -50%'|'Under -70%'|'Under -100%'|'Over 0%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'|'Over 35%'|'Over 40%'|'Over 45%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
-     * @returns {this} this
-     */
-    operatingMargin(filter) {
-        if (! operatingMarginMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_opermargin_' + operatingMarginMap[filter])
-        return this
-    }
-
-    /**
-     * A ratio of profitability calculated as net income divided by revenues, or net profits divided by sales. It measures how much out of every dollar of sales a company actually keeps in earnings.
-     *
-     * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Negative (<-20%)'|'High (>20%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 45%'|'Under 40%'|'Under 35%'|'Under 30%'|'Under 25%'|'Under 20%'|'Under 15%'|'Under 10%'|'Under 5%'|'Under 0%'|'Under -10%'|'Under -20%'|'Under -30%'|'Under -50%'|'Under -70%'|'Under -100%'|'Over 0%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'|'Over 35%'|'Over 40%'|'Over 45%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
-     * @returns {this} this
-     */
-    netProfitMargin(filter) {
-        if (! netProfitMarginMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_netmargin_' + netProfitMarginMap[filter])
-        return this
-    }
-
-    /**
-     * The percentage of earnings paid to shareholders in dividends.
-     *
-     * @param {'None (0%)'|'Positive (>0%)'|'Low (<20%)'|'High (>50%)'|'Over 0%'|'Over 10%'|'Over 20%'|'Over 30%'|'Over 40%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'|'Over 100%'|'Under 10%'|'Under 20%'|'Under 30%'|'Under 40%'|'Under 50%'|'Under 60%'|'Under 70%'|'Under 80%'|'Under 90%'|'Under 100%'} filter Filter
-     * @returns {this} this
-     */
-    payoutRatio(filter) {
-        if (! payoutRatioMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('fa_payoutratio_' + payoutRatioMap[filter])
-        return this
-    }
-
-    /**
-     * Level to which a company is owned by its own management.
-     *
-     * @param {'Low (<5%)'|'High (>30%)'|'Very High (>50%)'|'Over 10%'|'Over 20%'|'Over 30%'|'Over 40%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
-     * @returns {this} this
-     */
-    insiderOwnership(filter) {
-        if (! insiderOwnershipMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_insiderown_' + insiderOwnershipMap[filter])
-        return this
-    }
-
-    /**
-     * A company's shares being purchased or sold by its own management. Value represents 6-month percentual change in total insider ownership.
-     *
-     * @param {'Very Negative (<20%)'|'Negative (<0%)'|'Positive (>0%)'|'Very Positive (>20%)'|'Under -90%'|'Under -80%'|'Under -70%'|'Under -60%'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'|'Over +60%'|'Over +70%'|'Over +80%'|'Over +90%'} filter Filter
-     * @returns {this} this
-     */
-    insiderTransactions(filter) {
-        if (! insiderTransactionsMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_insidertrans_' + insiderTransactionsMap[filter])
-        return this
-    }
-
-    /**
-     * Level to which a company is owned by financial institutions.
-     *
-     * @param {'Low (<5%)'|'High (>90%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 40%'|'Under 30%'|'Under 20%'|'Under 10%'|'Over 10%'|'Over 20%'|'Over 30%'|'Over 40%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
-     * @returns {this} this
-     */
-    institutionalOwnership(filter) {
-        if (! institutionalOwnershipMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_instown_' + institutionalOwnershipMap[filter])
-        return this
-    }
-
-    /**
-     * A company's shares being purchased or sold by financial institutions. Value represents 3-month change in institutional ownership.
-     *
-     * @param {'Very Negative (<20%)'|'Negative (<0%)'|'Positive (>0%)'|'Very Positive (>20%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
-     * @returns {this} this
-     */
-    institutionalTransactions(filter) {
-        if (! institutionalTransactionsMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_insttrans_' + institutionalTransactionsMap[filter])
-        return this
-    }
-
-    /**
-     * The amount of short-selling transactions of given stock.
-     *
-     * @param {'Low (<5%)'|'High (>20%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
-     * @returns {this} this
-     */
-    floatShort(filter) {
-        if (! floatShortMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_short_' + floatShortMap[filter])
-        return this
-    }
-
-    /**
-     * An outlook of a stock-market analyst on a stock.
-     *
-     * @param {'Strong Buy (1)'|'Buy or better'|'Buy'|'Hold or better'|'Hold'|'Hold or worse'|'Sell'|'Sell or worse'|'Strong Sell (5)'} filter Filter
-     * @returns {this} this
-     */
-    analystRecom(filter) {
-        if (! analystRecomMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('an_recom_' + analystRecomMap[filter])
-        return this
-    }
-
-    /**
-     * Stocks with options and/or available to sell short.
-     *
-     * @param {'Optionable'|'Shortable'|'Optionable and shortable'} filter Filter
-     * @returns {this} this
-     */
-    optionShort(filter) {
-        if (! optionShortMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_opt_' + optionShortMap[filter])
-        return this
-    }
-
-    /**
-     * Date when company reports earnings
-     *
-     * @param {'Today'|'Today Before Market Open'|'Today After Market Close'|'Tomorrow'|'Tomorrow Before Market Open'|'Tomorrow After Market Close'|'Yesterday'|'Yesterday Before Market Open'|'Yesterday After Market Close'|'Next 5 Days'|'Previous 5 Days'|'This Week'|'Next Week'|'Previous Week'|'This Month'} filter Filter
-     * @returns {this} this
-     */
-    earningsDate(filter) {
-        if (! earningsDateMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('earningsdate_' + earningsDateMap[filter])
-        return this
-    }
-
-    /**
-     * Rate of return for a given stock.
-     *
-     * @param {'Today Up'|'Today Down'|'Today -15%'|'Today -10%'|'Today -5%'|'Today +5%'|'Today +10%'|'Today +15%'|'Week -30%'|'Week -20%'|'Week -10%'|'Week Down'|'Week Up'|'Week +10%'|'Week +20%'|'Week +30%'|'Month -50%'|'Month -30%'|'Month -20%'|'Month -10%'|'Month Down'|'Month Up'|'Month +10%'|'Month +20%'|'Month +30%'|'Month +50%'|'Quarter -50%'|'Quarter -30%'|'Quarter -20%'|'Quarter -10%'|'Quarter Down'|'Quarter Up'|'Quarter +10%'|'Quarter +20%'|'Quarter +30%'|'Quarter +50%'|'Half -75%'|'Half -50%'|'Half -30%'|'Half -20%'|'Half -10%'|'Half Down'|'Half Up'|'Half +10%'|'Half +20%'|'Half +30%'|'Half +50%'|'Half +100%'|'Year -75%'|'Year -50%'|'Year -30%'|'Year -20%'|'Year -10%'|'Year Down'|'Year Up'|'Year +10%'|'Year +20%'|'Year +30%'|'Year +50%'|'Year +100%'|'Year +200%'|'Year +300%'|'Year +500%'|'YTD -75%'|'YTD -50%'|'YTD -30%'|'YTD -20%'|'YTD -10%'|'YTD -5%'|'YTD Down'|'YTD Up'|'YTD +5%'|'YTD +10%'|'YTD +20%'|'YTD +30%'|'YTD +50%'|'YTD +100%'} filter Filter
-     * @returns {this} this
-     */
-    performance(filter) {
-        if (! performanceMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_perf_' + performanceMap[filter])
-        return this
-    }
-
-    /**
-     * Rate of return for a given stock.
-     *
-     * @param {'Today Up'|'Today Down'|'Today -15%'|'Today -10%'|'Today -5%'|'Today +5%'|'Today +10%'|'Today +15%'|'Week -30%'|'Week -20%'|'Week -10%'|'Week Down'|'Week Up'|'Week +10%'|'Week +20%'|'Week +30%'|'Month -50%'|'Month -30%'|'Month -20%'|'Month -10%'|'Month Down'|'Month Up'|'Month +10%'|'Month +20%'|'Month +30%'|'Month +50%'|'Quarter -50%'|'Quarter -30%'|'Quarter -20%'|'Quarter -10%'|'Quarter Down'|'Quarter Up'|'Quarter +10%'|'Quarter +20%'|'Quarter +30%'|'Quarter +50%'|'Half -75%'|'Half -50%'|'Half -30%'|'Half -20%'|'Half -10%'|'Half Down'|'Half Up'|'Half +10%'|'Half +20%'|'Half +30%'|'Half +50%'|'Half +100%'|'Year -75%'|'Year -50%'|'Year -30%'|'Year -20%'|'Year -10%'|'Year Down'|'Year Up'|'Year +10%'|'Year +20%'|'Year +30%'|'Year +50%'|'Year +100%'|'Year +200%'|'Year +300%'|'Year +500%'|'YTD -75%'|'YTD -50%'|'YTD -30%'|'YTD -20%'|'YTD -10%'|'YTD -5%'|'YTD Down'|'YTD Up'|'YTD +5%'|'YTD +10%'|'YTD +20%'|'YTD +30%'|'YTD +50%'|'YTD +100%'} filter Filter
-     * @returns {this} this
-     */
-    performance2(filter) {
-        if (! performance2Map[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_perf2_' + performance2Map[filter])
-        return this
-    }
-
-    /**
-     * A statistical measure of the dispersion of returns for a given stock. Represents average daily high/low trading range.
-     *
-     * @param {'Week - Over 3%'|'Week - Over 4%'|'Week - Over 5%'|'Week - Over 6%'|'Week - Over 7%'|'Week - Over 8%'|'Week - Over 9%'|'Week - Over 10%'|'Week - Over 12%'|'Week - Over 15%'|'Month - Over 2%'|'Month - Over 3%'|'Month - Over 4%'|'Month - Over 5%'|'Month - Over 6%'|'Month - Over 7%'|'Month - Over 8%'|'Month - Over 9%'|'Month - Over 10%'|'Month - Over 12%'|'Month - Over 15%'} filter Filter
-     * @returns {this} this
-     */
-    volatility(filter) {
-        if (! volatilityMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_volatility_' + volatilityMap[filter])
-        return this
-    }
-
-    /**
-     * The Relative Strength Index (RSI) is a technical analysis oscillator showing price strength by comparing upward and downward close-to-close movements.
-     *
-     * @param {'Overbought (90)'|'Overbought (80)'|'Overbought (70)'|'Overbought (60)'|'Oversold (40)'|'Oversold (30)'|'Oversold (20)'|'Oversold (10)'|'Not Overbought (<60)'|'Not Overbought (<50)'|'Not Oversold (>50)'|'Not Oversold (>40)'} filter Filter
-     * @returns {this} this
-     */
-    rsi14(filter) {
-        if (! rsi14Map[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_rsi_' + rsi14Map[filter])
-        return this
-    }
-
-    /**
-     * The difference between yesterday's closing price and today's opening price.
-     *
-     * @param {'Up'|'Up 0%'|'Up 1%'|'Up 2%'|'Up 3%'|'Up 4%'|'Up 5%'|'Up 6%'|'Up 7%'|'Up 8%'|'Up 9%'|'Up 10%'|'Up 15%'|'Up 20%'|'Down'|'Down 0%'|'Down 1%'|'Down 2%'|'Down 3%'|'Down 4%'|'Down 5%'|'Down 6%'|'Down 7%'|'Down 8%'|'Down 9%'|'Down 10%'|'Down 15%'|'Down 20%'} filter Filter
-     * @returns {this} this
-     */
-    gap(filter) {
-        if (! gapMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_gap_' + gapMap[filter])
-        return this
-    }
-
-    /**
-     * 20-Day simple moving average of closing price is the mean of the previous 20 days' closing prices.
-     *
-     * @param {'Price below SMA20'|'Price 10% below SMA20'|'Price 20% below SMA20'|'Price 30% below SMA20'|'Price 40% below SMA20'|'Price 50% below SMA20'|'Price above SMA20'|'Price 10% above SMA20'|'Price 20% above SMA20'|'Price 30% above SMA20'|'Price 40% above SMA20'|'Price 50% above SMA20'|'Price crossed SMA20'|'Price crossed SMA20 above'|'Price crossed SMA20 below'|'SMA20 crossed SMA50'|'SMA20 crossed SMA50 above'|'SMA20 crossed SMA50 below'|'SMA20 crossed SMA200'|'SMA20 crossed SMA200 above'|'SMA20 crossed SMA200 below'|'SMA20 above SMA50'|'SMA20 below SMA50'|'SMA20 above SMA200'|'SMA20 below SMA200'} filter Filter
-     * @returns {this} this
-     */
-    twentyDaySimpleMovingAverage(filter) {
-        if (! twentyDaySimpleMovingAverageMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_sma20_' + twentyDaySimpleMovingAverageMap[filter])
-        return this
-    }
-
-    /**
-     * 50-Day simple moving average of closing price is the mean of the previous 50 days' closing prices.
-     *
-     * @param {'Price below SMA50'|'Price 10% below SMA50'|'Price 20% below SMA50'|'Price 30% below SMA50'|'Price 40% below SMA50'|'Price 50% below SMA50'|'Price above SMA50'|'Price 10% above SMA50'|'Price 20% above SMA50'|'Price 30% above SMA50'|'Price 40% above SMA50'|'Price 50% above SMA50'|'Price crossed SMA50'|'Price crossed SMA50 above'|'Price crossed SMA50 below'|'SMA50 crossed SMA20'|'SMA50 crossed SMA20 above'|'SMA50 crossed SMA20 below'|'SMA50 crossed SMA200'|'SMA50 crossed SMA200 above'|'SMA50 crossed SMA200 below'|'SMA50 above SMA20'|'SMA50 below SMA20'|'SMA50 above SMA200'|'SMA50 below SMA200'} filter Filter
-     * @returns {this} this
-     */
-    fiftyDaySimpleMovingAverage(filter) {
-        if (! fiftyDaySimpleMovingAverageMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_sma50_' + fiftyDaySimpleMovingAverageMap[filter])
-        return this
-    }
-
-    /**
-     * 200-Day simple moving average of closing price is the mean of the previous 200 days' closing prices.
-     *
-     * @param {'Price below SMA200'|'Price 10% below SMA200'|'Price 20% below SMA200'|'Price 30% below SMA200'|'Price 40% below SMA200'|'Price 50% below SMA200'|'Price 60% below SMA200'|'Price 70% below SMA200'|'Price 80% below SMA200'|'Price 90% below SMA200'|'Price above SMA200'|'Price 10% above SMA200'|'Price 20% above SMA200'|'Price 30% above SMA200'|'Price 40% above SMA200'|'Price 50% above SMA200'|'Price 60% above SMA200'|'Price 70% above SMA200'|'Price 80% above SMA200'|'Price 90% above SMA200'|'Price 100% above SMA200'|'Price crossed SMA200'|'Price crossed SMA200 above'|'Price crossed SMA200 below'|'SMA200 crossed SMA20'|'SMA200 crossed SMA20 above'|'SMA200 crossed SMA20 below'|'SMA200 crossed SMA50'|'SMA200 crossed SMA50 above'|'SMA200 crossed SMA50 below'|'SMA200 above SMA20'|'SMA200 below SMA20'|'SMA200 above SMA50'|'SMA200 below SMA50'} filter Filter
-     * @returns {this} this
-     */
-    twoHundredDaySimpleMovingAverage(filter) {
-        if (! twoHundredDaySimpleMovingAverageMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_sma200_' + twoHundredDaySimpleMovingAverageMap[filter])
-        return this
-    }
-
-    /**
-     * The difference between previous's close price and today's last price.
-     *
-     * @param {'Up'|'Up 1%'|'Up 2%'|'Up 3%'|'Up 4%'|'Up 5%'|'Up 6%'|'Up 7%'|'Up 8%'|'Up 9%'|'Up 10%'|'Up 15%'|'Up 20%'|'Down'|'Down 1%'|'Down 2%'|'Down 3%'|'Down 4%'|'Down 5%'|'Down 6%'|'Down 7%'|'Down 8%'|'Down 9%'|'Down 10%'|'Down 15%'|'Down 20%'} filter Filter
-     * @returns {this} this
-     */
-    change(filter) {
-        if (! changeMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_change_' + changeMap[filter])
-        return this
-    }
-
-    /**
-     * The difference between today's open price and today's last price.
-     *
-     * @param {'Up'|'Up 1%'|'Up 2%'|'Up 3%'|'Up 4%'|'Up 5%'|'Up 6%'|'Up 7%'|'Up 8%'|'Up 9%'|'Up 10%'|'Up 15%'|'Up 20%'|'Down'|'Down 1%'|'Down 2%'|'Down 3%'|'Down 4%'|'Down 5%'|'Down 6%'|'Down 7%'|'Down 8%'|'Down 9%'|'Down 10%'|'Down 15%'|'Down 20%'} filter Filter
-     * @returns {this} this
-     */
-    changeFromOpen(filter) {
-        if (! changeFromOpenMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_changeopen_' + changeFromOpenMap[filter])
-        return this
-    }
-
-    /**
-     * Maximum/minimum of previous 20 days' highs/lows.
-     *
-     * @param {'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'} filter Filter
-     * @returns {this} this
-     */
-    twentyDayHighLow(filter) {
-        if (! twentyDayHighLowMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_highlow20d_' + twentyDayHighLowMap[filter])
-        return this
-    }
-
-    /**
-     * Maximum/minimum of previous 50 days' highs/lows.
-     *
-     * @param {'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'} filter Filter
-     * @returns {this} this
-     */
-    fiftyDayHighLow(filter) {
-        if (! fiftyDayHighLowMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_highlow50d_' + fiftyDayHighLowMap[filter])
-        return this
-    }
-
-    /**
-     * Maximum/minimum of previous 52 weeks' highs/lows.
-     *
-     * @param {'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'60% or more below High'|'70% or more below High'|'80% or more below High'|'90% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'60% or more above Low'|'70% or more above Low'|'80% or more above Low'|'90% or more above Low'|'100% or more above Low'|'120% or more above Low'|'150% or more above Low'|'200% or more above Low'|'300% or more above Low'|'500% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'} filter Filter
-     * @returns {this} this
-     */
-    fiftyTwoWeekHighLow(filter) {
-        if (! fiftyTwoWeekHighLowMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_highlow52w_' + fiftyTwoWeekHighLowMap[filter])
-        return this
-    }
-
-    /**
-     * A chart pattern is a distinct formation on a stock chart that creates a trading signal, or a sign of future price movements. Chartists use these patterns to identify current trends and trend reversals and to trigger buy and sell signals.
-     *
-     * @param {'Horizontal S/R'|'Horizontal S/R (Strong)'|'TL Resistance'|'TL Resistance (Strong)'|'TL Support'|'TL Support (Strong)'|'Wedge Up'|'Wedge Up (Strong)'|'Wedge Down'|'Wedge Down (Strong)'|'Triangle Ascending'|'Triangle Ascending (Strong)'|'Triangle Descending'|'Triangle Descending (Strong)'|'Wedge'|'Wedge (Strong)'|'Channel Up'|'Channel Up (Strong)'|'Channel Down'|'Channel Down (Strong)'|'Channel'|'Channel (Strong)'|'Double Top'|'Double Bottom'|'Multiple Top'|'Multiple Bottom'|'Head & Shoulders'|'Head & Shoulders Inverse'} filter Filter
-     * @returns {this} this
-     */
-    pattern(filter) {
-        if (! patternMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_pattern_' + patternMap[filter])
-        return this
-    }
-
-    /**
-     * Candlesticks are usually composed of the body (black or white), an upper and a lower shadow (wick). The wick illustrates the highest and lowest traded prices of a stock during the time interval represented. The body illustrates the opening and closing trades.
-     *
-     * @param {'Long Lower Shadow'|'Long Upper Shadow'|'Hammer'|'Inverted Hammer'|'Spinning Top White'|'Spinning Top Black'|'Doji'|'Dragonfly Doji'|'Gravestone Doji'|'Marubozu White'|'Marubozu Black'} filter Filter
-     * @returns {this} this
-     */
-    candlestick(filter) {
-        if (! candlestickMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_candlestick_' + candlestickMap[filter])
-        return this
-    }
-
-    /**
-     * A measure of a stock’s price volatility relative to the market. An asset with a beta of 0 means that its price is not at all correlated with the market. A positive beta means that the asset generally follows the market. A negative beta shows that the asset inversely follows the market, decreases in value if the market goes up.
-     *
-     * @param {'Under 0'|'Under 0.5'|'Under 1'|'Under 1.5'|'Under 2'|'Over 0'|'Over 0.5'|'Over 1'|'Over 1.5'|'Over 2'|'Over 2.5'|'Over 3'|'Over 4'|'0 to 0.5'|'0 to 1'|'0.5 to 1'|'0.5 to 1.5'|'1 to 1.5'|'1 to 2'} filter Filter
-     * @returns {this} this
-     */
-    beta(filter) {
-        if (! betaMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_beta_' + betaMap[filter])
-        return this
-    }
-
-    /**
-     * A measure of stock volatility. The Average True Range is an exponential moving average (14-days) of the True Ranges. The range of a day's trading is high−low, True Range extends it to yesterday's closing price if it was outside of today's range, True Range = max(high,closeprev) − min(low,closeprev)
-     *
-     * @param {'Over 0.25'|'Over 0.5'|'Over 0.75'|'Over 1'|'Over 1.5'|'Over 2'|'Over 2.5'|'Over 3'|'Over 3.5'|'Over 4'|'Over 4.5'|'Over 5'|'Under 0.25'|'Under 0.5'|'Under 0.75'|'Under 1'|'Under 1.5'|'Under 2'|'Under 2.5'|'Under 3'|'Under 3.5'|'Under 4'|'Under 4.5'|'Under 5'} filter Filter
-     * @returns {this} this
-     */
-    averageTrueRange(filter) {
-        if (! averageTrueRangeMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ta_averagetruerange_' + averageTrueRangeMap[filter])
-        return this
-    }
-
-    /**
-     * The average number of shares traded in a security per day.
-     *
-     * @param {'Under 50K'|'Under 100K'|'Under 500K'|'Under 750K'|'Under 1M'|'Over 50K'|'Over 100K'|'Over 200K'|'Over 300K'|'Over 400K'|'Over 500K'|'Over 750K'|'Over 1M'|'Over 2M'|'100K to 500K'|'100K to 1M'|'500K to 1M'|'500K to 10M'} filter Filter
-     * @returns {this} this
-     */
-    averageVolume(filter) {
-        if (! averageVolumeMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_avgvol_' + averageVolumeMap[filter])
-        return this
-    }
-
-    /**
-     * Ratio between current volume and 3-month average, intraday adjusted.
-     *
-     * @param {'Over 10'|'Over 5'|'Over 3'|'Over 2'|'Over 1.5'|'Over 1'|'Over 0.75'|'Over 0.5'|'Over 0.25'|'Under 2'|'Under 1.5'|'Under 1'|'Under 0.75'|'Under 0.5'|'Under 0.25'|'Under 0.1'} filter Filter
-     * @returns {this} this
-     */
-    relativeVolume(filter) {
-        if (! relativeVolumeMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_relvol_' + relativeVolumeMap[filter])
-        return this
-    }
-
-    /**
-     * Number of shares traded today.
-     *
-     * @param {'Under 50K'|'Under 100K'|'Under 500K'|'Under 750K'|'Under 1M'|'Over 0'|'Over 50K'|'Over 100K'|'Over 200K'|'Over 300K'|'Over 400K'|'Over 500K'|'Over 750K'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'} filter Filter
-     * @returns {this} this
-     */
-    currentVolume(filter) {
-        if (! currentVolumeMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_curvol_' + currentVolumeMap[filter])
-        return this
-    }
-
-    /**
-     * The current stock price.
-     *
-     * @param {'Under $1'|'Under $2'|'Under $3'|'Under $4'|'Under $5'|'Under $7'|'Under $10'|'Under $15'|'Under $20'|'Under $30'|'Under $40'|'Under $50'|'Over $1'|'Over $2'|'Over $3'|'Over $4'|'Over $5'|'Over $7'|'Over $10'|'Over $15'|'Over $20'|'Over $30'|'Over $40'|'Over $50'|'Over $60'|'Over $70'|'Over $80'|'Over $90'|'Over $100'|'$1 to $5'|'$1 to $10'|'$1 to $20'|'$5 to $10'|'$5 to $20'|'$5 to $50'|'$10 to $20'|'$10 to $50'|'$20 to $50'|'$50 to $100'} filter Filter
-     * @returns {this} this
-     */
-    price(filter) {
-        if (! priceMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_price_' + priceMap[filter])
-        return this
-    }
-
-    /**
-     * Analysts' mean target price.
-     *
-     * @param {'50% Above Price'|'40% Above Price'|'30% Above Price'|'20% Above Price'|'10% Above Price'|'5% Above Price'|'Above Price'|'Below Price'|'5% Below Price'|'10% Below Price'|'20% Below Price'|'30% Below Price'|'40% Below Price'|'50% Below Price'} filter Filter
-     * @returns {this} this
-     */
-    targetPrice(filter) {
-        if (! targetPriceMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('targetprice_' + targetPriceMap[filter])
-        return this
-    }
-
-    /**
-     * Date when company had an IPO.
-     *
-     * @param {'Today'|'Yesterday'|'In the last week'|'In the last month'|'In the last quarter'|'In the last year'|'In the last 2 years'|'In the last 3 years'|'In the last 5 years'|'More than a year ago'|'More than 5 years ago'|'More than 10 years ago'|'More than 15 years ago'|'More than 20 years ago'|'More than 25 years ago'} filter Filter
-     * @returns {this} this
-     */
-    ipoDate(filter) {
-        if (! ipoDateMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('ipodate_' + ipoDateMap[filter])
-        return this
-    }
-
-    /**
-     * Shares outstanding represent the total number of shares issued by a corporation and held by its shareholders.
-     *
-     * @param {'Under 1M'|'Under 5M'|'Under 10M'|'Under 20M'|'Under 50M'|'Under 100M'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'|'Over 50M'|'Over 100M'|'Over 200M'|'Over 500M'|'Over 1000M'} filter Filter
-     * @returns {this} this
-     */
-    sharesOutstanding(filter) {
-        if (! sharesOutstandingMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_outstanding_' + sharesOutstandingMap[filter])
-        return this
-    }
-
-    /**
-     * Float is the number of stock shares that are available for trading to the public. This doesn't include shares held by insiders.
-     *
-     * @param {'Under 1M'|'Under 5M'|'Under 10M'|'Under 20M'|'Under 50M'|'Under 100M'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'|'Over 50M'|'Over 100M'|'Over 200M'|'Over 500M'|'Over 1000M'} filter Filter
-     * @returns {this} this
-     */
-    float(filter) {
-        if (! floatMap[filter]) {
-            throw Error('Unknown filter: ' + filter)
-        }
-        this._filters.push('sh_float_' + floatMap[filter])
-        return this
-    }
-
-    /**
-     * TA Signal
-     *
-     * @param {'Top Gainers'|'Top Losers'|'New High'|'New Low'|'Most Volatile'|'Most Active'|'Unusual Volume'|'Overbought'|'Oversold'|'Downgrades'|'Upgrades'|'Earnings Before'|'Earnings After'|'Recent Insider Buying'|'Recent Insider Selling'|'Major News'|'Horizontal S/R'|'TL Resistance'|'TL Support'|'Wedge Up'|'Wedge Down'|'Triangle Ascending'|'Triangle Descending'|'Wedge'|'Channel Up'|'Channel Down'|'Channel'|'Double Top'|'Double Bottom'|'Multiple Top'|'Multiple Bottom'|'Head & Shoulders'|'Head & Shoulders Inverse'} signal TA signal
-     * @returns {this} this
-     */
-    signal(signal) {
-        if (! signalsMap[signal]) {
-            throw Error('Unknown signal: ' + signal)
-        }
-        this._signal = signalsMap[signal]
-        return this
-    }
-
-    /**
-     * Scan for stocks. Will return only the first 1000 tickers available.
-     *
-     * @returns {Promise<string[]>} List of stock tickers
-     */
-    async scan() {
-        const params = { f: this._filters.join(','), s: this._signal }
-        const res = await axios.get(this._url, { params })
-        const $ = cheerio.load(res.data)
-        return $(selector).map((i, el) => $(el).text().trim()).get()
-    }
-} // class
+FinVizScreener.prototype.exchange = function (filter) {
+    if (! exchangeMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('exch_' + exchangeMap[filter])
+    return this
+}
+
+/**
+ * A major index membership of a stock.
+ *
+ * @param {'S&P 500'|'DJIA'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.index = function (filter) {
+    if (! indexMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('idx_' + indexMap[filter])
+    return this
+}
+
+/**
+ * The sector which a stock belongs to.
+ *
+ * @param {'Basic Materials'|'Communication Services'|'Consumer Cyclical'|'Consumer Defensive'|'Energy'|'Financial'|'Healthcare'|'Industrials'|'Real Estate'|'Technology'|'Utilities'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.sector = function (filter) {
+    if (! sectorMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sec_' + sectorMap[filter])
+    return this
+}
+
+/**
+ * The industry which a stock belongs to.
+ *
+ * @param {'Stocks only (ex-Funds)'|'Exchange Traded Fund'|'Advertising Agencies'|'Aerospace & Defense'|'Agricultural Inputs'|'Airlines'|'Airports & Air Services'|'Aluminum'|'Apparel Manufacturing'|'Apparel Retail'|'Asset Management'|'Auto Manufacturers'|'Auto Parts'|'Auto & Truck Dealerships'|'Banks - Diversified'|'Banks - Regional'|'Beverages - Brewers'|'Beverages - Non-Alcoholic'|'Beverages - Wineries & Distilleries'|'Biotechnology'|'Broadcasting'|'Building Materials'|'Building Products & Equipment'|'Business Equipment & Supplies'|'Capital Markets'|'Chemicals'|'Closed-End Fund - Debt'|'Closed-End Fund - Equity'|'Closed-End Fund - Foreign'|'Coking Coal'|'Communication Equipment'|'Computer Hardware'|'Confectioners'|'Conglomerates'|'Consulting Services'|'Consumer Electronics'|'Copper'|'Credit Services'|'Department Stores'|'Diagnostics & Research'|'Discount Stores'|'Drug Manufacturers - General'|'Drug Manufacturers - Specialty & Generic'|'Education & Training Services'|'Electrical Equipment & Parts'|'Electronic Components'|'Electronic Gaming & Multimedia'|'Electronics & Computer Distribution'|'Engineering & Construction'|'Entertainment'|'Exchange Traded Fund'|'Farm & Heavy Construction Machinery'|'Farm Products'|'Financial Conglomerates'|'Financial Data & Stock Exchanges'|'Food Distribution'|'Footwear & Accessories'|'Furnishings, Fixtures & Appliances'|'Gambling'|'Gold'|'Grocery Stores'|'Healthcare Plans'|'Health Information Services'|'Home Improvement Retail'|'Household & Personal Products'|'Industrial Distribution'|'Information Technology Services'|'Infrastructure Operations'|'Insurance Brokers'|'Insurance - Diversified'|'Insurance - Life'|'Insurance - Property & Casualty'|'Insurance - Reinsurance'|'Insurance - Specialty'|'Integrated Freight & Logistics'|'Internet Content & Information'|'Internet Retail'|'Leisure'|'Lodging'|'Lumber & Wood Production'|'Luxury Goods'|'Marine Shipping'|'Medical Care Facilities'|'Medical Devices'|'Medical Distribution'|'Medical Instruments & Supplies'|'Metal Fabrication'|'Mortgage Finance'|'Oil & Gas Drilling'|'Oil & Gas E&P'|'Oil & Gas Equipment & Services'|'Oil & Gas Integrated'|'Oil & Gas Midstream'|'Oil & Gas Refining & Marketing'|'Other Industrial Metals & Mining'|'Other Precious Metals & Mining'|'Packaged Foods'|'Packaging & Containers'|'Paper & Paper Products'|'Personal Services'|'Pharmaceutical Retailers'|'Pollution & Treatment Controls'|'Publishing'|'Railroads'|'Real Estate - Development'|'Real Estate - Diversified'|'Real Estate Services'|'Recreational Vehicles'|'REIT - Diversified'|'REIT - Healthcare Facilities'|'REIT - Hotel & Motel'|'REIT - Industrial'|'REIT - Mortgage'|'REIT - Office'|'REIT - Residential'|'REIT - Retail'|'REIT - Specialty'|'Rental & Leasing Services'|'Residential Construction'|'Resorts & Casinos'|'Restaurants'|'Scientific & Technical Instruments'|'Security & Protection Services'|'Semiconductor Equipment & Materials'|'Semiconductors'|'Shell Companies'|'Silver'|'Software - Application'|'Software - Infrastructure'|'Solar'|'Specialty Business Services'|'Specialty Chemicals'|'Specialty Industrial Machinery'|'Specialty Retail'|'Staffing & Employment Services'|'Steel'|'Telecom Services'|'Textile Manufacturing'|'Thermal Coal'|'Tobacco'|'Tools & Accessories'|'Travel Services'|'Trucking'|'Uranium'|'Utilities - Diversified'|'Utilities - Independent Power Producers'|'Utilities - Regulated Electric'|'Utilities - Regulated Gas'|'Utilities - Regulated Water'|'Utilities - Renewable'|'Waste Management'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.industry = function (filter) {
+    if (! industryMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ind_' + industryMap[filter])
+    return this
+}
+
+/**
+ * The country where company of selected stock is based.
+ *
+ * @param {'USA'|'Foreign (ex-USA)'|'Asia'|'Europe'|'Latin America'|'BRIC'|'Argentina'|'Australia'|'Bahamas'|'Belgium'|'BeNeLux'|'Bermuda'|'Brazil'|'Canada'|'Cayman Islands'|'Chile'|'China'|'China & Hong Kong'|'Colombia'|'Cyprus'|'Denmark'|'Finland'|'France'|'Germany'|'Greece'|'Hong Kong'|'Hungary'|'Iceland'|'India'|'Indonesia'|'Ireland'|'Israel'|'Italy'|'Japan'|'Kazakhstan'|'Luxembourg'|'Malaysia'|'Malta'|'Mexico'|'Monaco'|'Netherlands'|'New Zealand'|'Norway'|'Panama'|'Peru'|'Philippines'|'Portugal'|'Russia'|'Singapore'|'South Africa'|'South Korea'|'Spain'|'Sweden'|'Switzerland'|'Taiwan'|'Turkey'|'United Arab Emirates'|'United Kingdom'|'Uruguay'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.country = function (filter) {
+    if (! countryMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('geo_' + countryMap[filter])
+    return this
+}
+
+/**
+ * Equals The total dollar market value of all of a company's outstanding shares.
+ *
+ * @param {'Mega ($200bln and more)'|'Large ($10bln to $200bln)'|'Mid ($2bln to $10bln)'|'Small ($300mln to $2bln)'|'Micro ($50mln to $300mln)'|'Nano (under $50mln)'|'+Large (over $10bln)'|'+Mid (over $2bln)'|'+Small (over $300mln)'|'+Micro (over $50mln)'|'-Large (under $200bln)'|'-Mid (under $10bln)'|'-Small (under $2bln)'|'-Micro (under $300mln)'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.marketCap = function (filter) {
+    if (! marketCapMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('cap_' + marketCapMap[filter])
+    return this
+}
+
+/**
+ * A valuation ratio of a company's current share price compared to its per-share earnings (ttm).
+ *
+ * @param {'Low (<15)'|'Profitable (>0)'|'High (>50)'|'Under 5'|'Under 10'|'Under 15'|'Under 20'|'Under 25'|'Under 30'|'Under 35'|'Under 40'|'Under 45'|'Under 50'|'Over 5'|'Over 10'|'Over 15'|'Over 20'|'Over 25'|'Over 30'|'Over 35'|'Over 40'|'Over 45'|'Over 50'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.pe = function (filter) {
+    if (! peMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_pe_' + peMap[filter])
+    return this
+}
+
+/**
+ * A measure of the price-to-earnings ratio using forecasted earnings for the P/E calculation. Value for next fiscal year.
+ *
+ * @param {'Low (<15)'|'Profitable (>0)'|'High (>50)'|'Under 5'|'Under 10'|'Under 15'|'Under 20'|'Under 25'|'Under 30'|'Under 35'|'Under 40'|'Under 45'|'Under 50'|'Over 5'|'Over 10'|'Over 15'|'Over 20'|'Over 25'|'Over 30'|'Over 35'|'Over 40'|'Over 45'|'Over 50'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.forwardPe = function (filter) {
+    if (! forwardPeMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_fpe_' + forwardPeMap[filter])
+    return this
+}
+
+/**
+ * A ratio used to determine a stock's value while taking into account earnings growth.
+ *
+ * @param {'Low (<1)'|'High (>2)'|'Under 1'|'Under 2'|'Under 3'|'Over 1'|'Over 2'|'Over 3'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.peg = function (filter) {
+    if (! pegMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_peg_' + pegMap[filter])
+    return this
+}
+
+/**
+ * P/S number reflects the value placed on sales by the market. It is calculated by dividing the current closing price of the stock by the dollar-sales value per share.
+ *
+ * @param {'Low (<1)'|'High (>10)'|'Under 1'|'Under 2'|'Under 3'|'Under 4'|'Under 5'|'Under 6'|'Under 7'|'Under 8'|'Under 9'|'Under 10'|'Over 1'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 6'|'Over 7'|'Over 8'|'Over 9'|'Over 10'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.ps = function (filter) {
+    if (! psMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_ps_' + psMap[filter])
+    return this
+}
+
+/**
+ * A ratio used to compare a stock's market value to its book value. It is calculated by dividing the current closing price of the stock by the latest quarter's book value per share.
+ *
+ * @param {'Low (<1)'|'High (>5)'|'Under 1'|'Under 2'|'Under 3'|'Under 4'|'Under 5'|'Under 6'|'Under 7'|'Under 8'|'Under 9'|'Under 10'|'Over 1'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 6'|'Over 7'|'Over 8'|'Over 9'|'Over 10'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.pb = function (filter) {
+    if (! pbMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_pb_' + pbMap[filter])
+    return this
+}
+
+/**
+ * A ratio used to compare a stock's market value to its cash assets. It is calculated by dividing the current closing price of the stock by the latest quarter's cash per share.
+ *
+ * @param {'Low (<3)'|'High (>50)'|'Under 1'|'Under 2'|'Under 3'|'Under 4'|'Under 5'|'Under 6'|'Under 7'|'Under 8'|'Under 9'|'Under 10'|'Over 1'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 6'|'Over 7'|'Over 8'|'Over 9'|'Over 10'|'Over 20'|'Over 30'|'Over 40'|'Over 50'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.priceCash = function (filter) {
+    if (! priceCashMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_pc_' + priceCashMap[filter])
+    return this
+}
+
+/**
+ * A valuation metric that compares a company's market price to its level of annual free cash flow.
+ *
+ * @param {'Low (<15)'|'High (>50)'|'Under 5'|'Under 10'|'Under 15'|'Under 20'|'Under 25'|'Under 30'|'Under 35'|'Under 40'|'Under 45'|'Under 50'|'Under 60'|'Under 70'|'Under 80'|'Under 90'|'Under 100'|'Over 5'|'Over 10'|'Over 15'|'Over 20'|'Over 25'|'Over 30'|'Over 35'|'Over 40'|'Over 45'|'Over 50'|'Over 60'|'Over 70'|'Over 80'|'Over 90'|'Over 100'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.priceFreeCashFlow = function (filter) {
+    if (! priceFreeCashFlowMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_pfcf_' + priceFreeCashFlowMap[filter])
+    return this
+}
+
+/**
+ * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Value for current fiscal year.
+ *
+ * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.epsGrowththisYear = function (filter) {
+    if (! epsGrowththisYearMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_epsyoy_' + epsGrowththisYearMap[filter])
+    return this
+}
+
+/**
+ * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Estimate for next fiscal year.
+ *
+ * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.epsGrowthnextYear = function (filter) {
+    if (! epsGrowthnextYearMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_epsyoy1_' + epsGrowthnextYearMap[filter])
+    return this
+}
+
+/**
+ * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Annual growth over past 5 years.
+ *
+ * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.epsGrowthpast5Years = function (filter) {
+    if (! epsGrowthpast5YearsMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_eps5years_' + epsGrowthpast5YearsMap[filter])
+    return this
+}
+
+/**
+ * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Long term annual growth estimate.
+ *
+ * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (<10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.epsGrowthnext5Years = function (filter) {
+    if (! epsGrowthnext5YearsMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_estltgrowth_' + epsGrowthnext5YearsMap[filter])
+    return this
+}
+
+/**
+ * Annual growth over past 5 years.
+ *
+ * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.salesGrowthpast5Years = function (filter) {
+    if (! salesGrowthpast5YearsMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_sales5years_' + salesGrowthpast5YearsMap[filter])
+    return this
+}
+
+/**
+ * EPS is the portion of a company's profit allocated to each outstanding share of common stock. EPS serves as an indicator of a company's profitability. Quarter over quarter growth.
+ *
+ * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.epsGrowthqtrOverQtr = function (filter) {
+    if (! epsGrowthqtrOverQtrMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_epsqoq_' + epsGrowthqtrOverQtrMap[filter])
+    return this
+}
+
+/**
+ * Quarter over quarter growth.
+ *
+ * @param {'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.salesGrowthqtrOverQtr = function (filter) {
+    if (! salesGrowthqtrOverQtrMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_salesqoq_' + salesGrowthqtrOverQtrMap[filter])
+    return this
+}
+
+/**
+ * The dividend yield equals the annual dividend per share divided by the stock’s price. This measurement tells what percentage return a company pays out to shareholders in the form of dividends.
+ *
+ * @param {'None (0%)'|'Positive (>0%)'|'High (>5%)'|'Very High (>10%)'|'Over 1%'|'Over 2%'|'Over 3%'|'Over 4%'|'Over 5%'|'Over 6%'|'Over 7%'|'Over 8%'|'Over 9%'|'Over 10%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.dividendYield = function (filter) {
+    if (! dividendYieldMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_div_' + dividendYieldMap[filter])
+    return this
+}
+
+/**
+ * An indicator of how profitable a company is relative to its total assets. ROA gives an idea as to how efficient management is at using its assets to generate earnings. Calculated by dividing a company's annual earnings by its total assets, ROA is displayed as a percentage.
+ *
+ * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Positive (>15%)'|'Very Negative (<-15%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.returnOnAssets = function (filter) {
+    if (! returnOnAssetsMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_roa_' + returnOnAssetsMap[filter])
+    return this
+}
+
+/**
+ * A measure of a corporation's profitability that reveals how much profit a company generates with the money shareholders have invested. Calculated as Net Income / Shareholder's Equity.
+ *
+ * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Positive (>30%)'|'Very Negative (<-15%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.returnOnEquity = function (filter) {
+    if (! returnOnEquityMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_roe_' + returnOnEquityMap[filter])
+    return this
+}
+
+/**
+ * Performance measure used to evaluate the efficiency of an investment or to compare the efficiency of a number of different investments. To calculate ROI, the benefit (return) of an investment is divided by the cost of the investment: (Gain from Investment - Cost of Investment) / Cost of Investment.
+ *
+ * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Positive (>25%)'|'Very Negative (<-10%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.returnOnInvestment = function (filter) {
+    if (! returnOnInvestmentMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_roi_' + returnOnInvestmentMap[filter])
+    return this
+}
+
+/**
+ * A liquidity ratio that measures a company's ability to pay short-term obligations. Calculated as Current Assets / Current Liabilities.
+ *
+ * @param {'High (>3)'|'Low (<1)'|'Under 1'|'Under 0.5'|'Over 0.5'|'Over 1'|'Over 1.5'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 10'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.currentRatio = function (filter) {
+    if (! currentRatioMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_curratio_' + currentRatioMap[filter])
+    return this
+}
+
+/**
+ * An indicator of a company's short-term liquidity. The quick ratio measures a company's ability to meet its short-term obligations with its most liquid assets. The higher the quick ratio, the better the position of the company. Calculated as (Current Assets - Inventories) / Current Liabilities.
+ *
+ * @param {'High (>3)'|'Low (<0.5)'|'Under 1'|'Under 0.5'|'Over 0.5'|'Over 1'|'Over 1.5'|'Over 2'|'Over 3'|'Over 4'|'Over 5'|'Over 10'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.quickRatio = function (filter) {
+    if (! quickRatioMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_quickratio_' + quickRatioMap[filter])
+    return this
+}
+
+/**
+ * A measure of a company's financial leverage calculated by dividing its long term debt by stockholders' equity. It indicates what proportion of equity and debt the company is using to finance its assets.
+ *
+ * @param {'High (>0.5)'|'Low (<0.1)'|'Under 1'|'Under 0.9'|'Under 0.8'|'Under 0.7'|'Under 0.6'|'Under 0.5'|'Under 0.4'|'Under 0.3'|'Under 0.2'|'Under 0.1'|'Over 0.1'|'Over 0.2'|'Over 0.3'|'Over 0.4'|'Over 0.5'|'Over 0.6'|'Over 0.7'|'Over 0.8'|'Over 0.9'|'Over 1'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.ltDebtEquity = function (filter) {
+    if (! ltDebtEquityMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_ltdebteq_' + ltDebtEquityMap[filter])
+    return this
+}
+
+/**
+ * A measure of a company's financial leverage calculated by dividing its liabilities by stockholders' equity. It indicates what proportion of equity and debt the company is using to finance its assets.
+ *
+ * @param {'High (>0.5)'|'Low (<0.1)'|'Under 1'|'Under 0.9'|'Under 0.8'|'Under 0.7'|'Under 0.6'|'Under 0.5'|'Under 0.4'|'Under 0.3'|'Under 0.2'|'Under 0.1'|'Over 0.1'|'Over 0.2'|'Over 0.3'|'Over 0.4'|'Over 0.5'|'Over 0.6'|'Over 0.7'|'Over 0.8'|'Over 0.9'|'Over 1'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.debtEquity = function (filter) {
+    if (! debtEquityMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_debteq_' + debtEquityMap[filter])
+    return this
+}
+
+/**
+ * A company's total sales revenue minus its cost of goods sold, divided by the total sales revenue, expressed as a percentage. The gross margin represents the percent of total sales revenue that the company retains after incurring the direct costs associated with producing the goods and services sold by a company. The higher the percentage, the more the company retains on each dollar of sales to service its other costs and obligations.
+ *
+ * @param {'Positive (>0%)'|'Negative (<0%)'|'High (>50%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 45%'|'Under 40%'|'Under 35%'|'Under 30%'|'Under 25%'|'Under 20%'|'Under 15%'|'Under 10%'|'Under 5%'|'Under 0%'|'Under -10%'|'Under -20%'|'Under -30%'|'Under -50%'|'Under -70%'|'Under -100%'|'Over 0%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'|'Over 35%'|'Over 40%'|'Over 45%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.grossMargin = function (filter) {
+    if (! grossMarginMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_grossmargin_' + grossMarginMap[filter])
+    return this
+}
+
+/**
+ * Operating margin is a measurement of what proportion of a company's revenue is left over after paying for variable costs of production such as wages, raw materials, etc. A healthy operating margin is required for a company to be able to pay for its fixed costs, such as interest on debt. Calculated as Operating Income / Net Sales.
+ *
+ * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Negative (<-20%)'|'High (>25%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 45%'|'Under 40%'|'Under 35%'|'Under 30%'|'Under 25%'|'Under 20%'|'Under 15%'|'Under 10%'|'Under 5%'|'Under 0%'|'Under -10%'|'Under -20%'|'Under -30%'|'Under -50%'|'Under -70%'|'Under -100%'|'Over 0%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'|'Over 35%'|'Over 40%'|'Over 45%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.operatingMargin = function (filter) {
+    if (! operatingMarginMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_opermargin_' + operatingMarginMap[filter])
+    return this
+}
+
+/**
+ * A ratio of profitability calculated as net income divided by revenues, or net profits divided by sales. It measures how much out of every dollar of sales a company actually keeps in earnings.
+ *
+ * @param {'Positive (>0%)'|'Negative (<0%)'|'Very Negative (<-20%)'|'High (>20%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 45%'|'Under 40%'|'Under 35%'|'Under 30%'|'Under 25%'|'Under 20%'|'Under 15%'|'Under 10%'|'Under 5%'|'Under 0%'|'Under -10%'|'Under -20%'|'Under -30%'|'Under -50%'|'Under -70%'|'Under -100%'|'Over 0%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'|'Over 35%'|'Over 40%'|'Over 45%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.netProfitMargin = function (filter) {
+    if (! netProfitMarginMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_netmargin_' + netProfitMarginMap[filter])
+    return this
+}
+
+/**
+ * The percentage of earnings paid to shareholders in dividends.
+ *
+ * @param {'None (0%)'|'Positive (>0%)'|'Low (<20%)'|'High (>50%)'|'Over 0%'|'Over 10%'|'Over 20%'|'Over 30%'|'Over 40%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'|'Over 100%'|'Under 10%'|'Under 20%'|'Under 30%'|'Under 40%'|'Under 50%'|'Under 60%'|'Under 70%'|'Under 80%'|'Under 90%'|'Under 100%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.payoutRatio = function (filter) {
+    if (! payoutRatioMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('fa_payoutratio_' + payoutRatioMap[filter])
+    return this
+}
+
+/**
+ * Level to which a company is owned by its own management.
+ *
+ * @param {'Low (<5%)'|'High (>30%)'|'Very High (>50%)'|'Over 10%'|'Over 20%'|'Over 30%'|'Over 40%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.insiderOwnership = function (filter) {
+    if (! insiderOwnershipMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_insiderown_' + insiderOwnershipMap[filter])
+    return this
+}
+
+/**
+ * A company's shares being purchased or sold by its own management. Value represents 6-month percentual change in total insider ownership.
+ *
+ * @param {'Very Negative (<20%)'|'Negative (<0%)'|'Positive (>0%)'|'Very Positive (>20%)'|'Under -90%'|'Under -80%'|'Under -70%'|'Under -60%'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'|'Over +60%'|'Over +70%'|'Over +80%'|'Over +90%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.insiderTransactions = function (filter) {
+    if (! insiderTransactionsMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_insidertrans_' + insiderTransactionsMap[filter])
+    return this
+}
+
+/**
+ * Level to which a company is owned by financial institutions.
+ *
+ * @param {'Low (<5%)'|'High (>90%)'|'Under 90%'|'Under 80%'|'Under 70%'|'Under 60%'|'Under 50%'|'Under 40%'|'Under 30%'|'Under 20%'|'Under 10%'|'Over 10%'|'Over 20%'|'Over 30%'|'Over 40%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.institutionalOwnership = function (filter) {
+    if (! institutionalOwnershipMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_instown_' + institutionalOwnershipMap[filter])
+    return this
+}
+
+/**
+ * A company's shares being purchased or sold by financial institutions. Value represents 3-month change in institutional ownership.
+ *
+ * @param {'Very Negative (<20%)'|'Negative (<0%)'|'Positive (>0%)'|'Very Positive (>20%)'|'Under -50%'|'Under -45%'|'Under -40%'|'Under -35%'|'Under -30%'|'Under -25%'|'Under -20%'|'Under -15%'|'Under -10%'|'Under -5%'|'Over +5%'|'Over +10%'|'Over +15%'|'Over +20%'|'Over +25%'|'Over +30%'|'Over +35%'|'Over +40%'|'Over +45%'|'Over +50%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.institutionalTransactions = function (filter) {
+    if (! institutionalTransactionsMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_insttrans_' + institutionalTransactionsMap[filter])
+    return this
+}
+
+/**
+ * The amount of short-selling transactions of given stock.
+ *
+ * @param {'Low (<5%)'|'High (>20%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.floatShort = function (filter) {
+    if (! floatShortMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_short_' + floatShortMap[filter])
+    return this
+}
+
+/**
+ * An outlook of a stock-market analyst on a stock.
+ *
+ * @param {'Strong Buy (1)'|'Buy or better'|'Buy'|'Hold or better'|'Hold'|'Hold or worse'|'Sell'|'Sell or worse'|'Strong Sell (5)'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.analystRecom = function (filter) {
+    if (! analystRecomMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('an_recom_' + analystRecomMap[filter])
+    return this
+}
+
+/**
+ * Stocks with options and/or available to sell short.
+ *
+ * @param {'Optionable'|'Shortable'|'Optionable and shortable'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.optionShort = function (filter) {
+    if (! optionShortMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_opt_' + optionShortMap[filter])
+    return this
+}
+
+/**
+ * Date when company reports earnings
+ *
+ * @param {'Today'|'Today Before Market Open'|'Today After Market Close'|'Tomorrow'|'Tomorrow Before Market Open'|'Tomorrow After Market Close'|'Yesterday'|'Yesterday Before Market Open'|'Yesterday After Market Close'|'Next 5 Days'|'Previous 5 Days'|'This Week'|'Next Week'|'Previous Week'|'This Month'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.earningsDate = function (filter) {
+    if (! earningsDateMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('earningsdate_' + earningsDateMap[filter])
+    return this
+}
+
+/**
+ * Rate of return for a given stock.
+ *
+ * @param {'Today Up'|'Today Down'|'Today -15%'|'Today -10%'|'Today -5%'|'Today +5%'|'Today +10%'|'Today +15%'|'Week -30%'|'Week -20%'|'Week -10%'|'Week Down'|'Week Up'|'Week +10%'|'Week +20%'|'Week +30%'|'Month -50%'|'Month -30%'|'Month -20%'|'Month -10%'|'Month Down'|'Month Up'|'Month +10%'|'Month +20%'|'Month +30%'|'Month +50%'|'Quarter -50%'|'Quarter -30%'|'Quarter -20%'|'Quarter -10%'|'Quarter Down'|'Quarter Up'|'Quarter +10%'|'Quarter +20%'|'Quarter +30%'|'Quarter +50%'|'Half -75%'|'Half -50%'|'Half -30%'|'Half -20%'|'Half -10%'|'Half Down'|'Half Up'|'Half +10%'|'Half +20%'|'Half +30%'|'Half +50%'|'Half +100%'|'Year -75%'|'Year -50%'|'Year -30%'|'Year -20%'|'Year -10%'|'Year Down'|'Year Up'|'Year +10%'|'Year +20%'|'Year +30%'|'Year +50%'|'Year +100%'|'Year +200%'|'Year +300%'|'Year +500%'|'YTD -75%'|'YTD -50%'|'YTD -30%'|'YTD -20%'|'YTD -10%'|'YTD -5%'|'YTD Down'|'YTD Up'|'YTD +5%'|'YTD +10%'|'YTD +20%'|'YTD +30%'|'YTD +50%'|'YTD +100%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.performance = function (filter) {
+    if (! performanceMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_perf_' + performanceMap[filter])
+    return this
+}
+
+/**
+ * Rate of return for a given stock.
+ *
+ * @param {'Today Up'|'Today Down'|'Today -15%'|'Today -10%'|'Today -5%'|'Today +5%'|'Today +10%'|'Today +15%'|'Week -30%'|'Week -20%'|'Week -10%'|'Week Down'|'Week Up'|'Week +10%'|'Week +20%'|'Week +30%'|'Month -50%'|'Month -30%'|'Month -20%'|'Month -10%'|'Month Down'|'Month Up'|'Month +10%'|'Month +20%'|'Month +30%'|'Month +50%'|'Quarter -50%'|'Quarter -30%'|'Quarter -20%'|'Quarter -10%'|'Quarter Down'|'Quarter Up'|'Quarter +10%'|'Quarter +20%'|'Quarter +30%'|'Quarter +50%'|'Half -75%'|'Half -50%'|'Half -30%'|'Half -20%'|'Half -10%'|'Half Down'|'Half Up'|'Half +10%'|'Half +20%'|'Half +30%'|'Half +50%'|'Half +100%'|'Year -75%'|'Year -50%'|'Year -30%'|'Year -20%'|'Year -10%'|'Year Down'|'Year Up'|'Year +10%'|'Year +20%'|'Year +30%'|'Year +50%'|'Year +100%'|'Year +200%'|'Year +300%'|'Year +500%'|'YTD -75%'|'YTD -50%'|'YTD -30%'|'YTD -20%'|'YTD -10%'|'YTD -5%'|'YTD Down'|'YTD Up'|'YTD +5%'|'YTD +10%'|'YTD +20%'|'YTD +30%'|'YTD +50%'|'YTD +100%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.performance2 = function (filter) {
+    if (! performance2Map[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_perf2_' + performance2Map[filter])
+    return this
+}
+
+/**
+ * A statistical measure of the dispersion of returns for a given stock. Represents average daily high/low trading range.
+ *
+ * @param {'Week - Over 3%'|'Week - Over 4%'|'Week - Over 5%'|'Week - Over 6%'|'Week - Over 7%'|'Week - Over 8%'|'Week - Over 9%'|'Week - Over 10%'|'Week - Over 12%'|'Week - Over 15%'|'Month - Over 2%'|'Month - Over 3%'|'Month - Over 4%'|'Month - Over 5%'|'Month - Over 6%'|'Month - Over 7%'|'Month - Over 8%'|'Month - Over 9%'|'Month - Over 10%'|'Month - Over 12%'|'Month - Over 15%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.volatility = function (filter) {
+    if (! volatilityMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_volatility_' + volatilityMap[filter])
+    return this
+}
+
+/**
+ * The Relative Strength Index (RSI) is a technical analysis oscillator showing price strength by comparing upward and downward close-to-close movements.
+ *
+ * @param {'Overbought (90)'|'Overbought (80)'|'Overbought (70)'|'Overbought (60)'|'Oversold (40)'|'Oversold (30)'|'Oversold (20)'|'Oversold (10)'|'Not Overbought (<60)'|'Not Overbought (<50)'|'Not Oversold (>50)'|'Not Oversold (>40)'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.rsi14 = function (filter) {
+    if (! rsi14Map[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_rsi_' + rsi14Map[filter])
+    return this
+}
+
+/**
+ * The difference between yesterday's closing price and today's opening price.
+ *
+ * @param {'Up'|'Up 0%'|'Up 1%'|'Up 2%'|'Up 3%'|'Up 4%'|'Up 5%'|'Up 6%'|'Up 7%'|'Up 8%'|'Up 9%'|'Up 10%'|'Up 15%'|'Up 20%'|'Down'|'Down 0%'|'Down 1%'|'Down 2%'|'Down 3%'|'Down 4%'|'Down 5%'|'Down 6%'|'Down 7%'|'Down 8%'|'Down 9%'|'Down 10%'|'Down 15%'|'Down 20%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.gap = function (filter) {
+    if (! gapMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_gap_' + gapMap[filter])
+    return this
+}
+
+/**
+ * 20-Day simple moving average of closing price is the mean of the previous 20 days' closing prices.
+ *
+ * @param {'Price below SMA20'|'Price 10% below SMA20'|'Price 20% below SMA20'|'Price 30% below SMA20'|'Price 40% below SMA20'|'Price 50% below SMA20'|'Price above SMA20'|'Price 10% above SMA20'|'Price 20% above SMA20'|'Price 30% above SMA20'|'Price 40% above SMA20'|'Price 50% above SMA20'|'Price crossed SMA20'|'Price crossed SMA20 above'|'Price crossed SMA20 below'|'SMA20 crossed SMA50'|'SMA20 crossed SMA50 above'|'SMA20 crossed SMA50 below'|'SMA20 crossed SMA200'|'SMA20 crossed SMA200 above'|'SMA20 crossed SMA200 below'|'SMA20 above SMA50'|'SMA20 below SMA50'|'SMA20 above SMA200'|'SMA20 below SMA200'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.twentyDaySimpleMovingAverage = function (filter) {
+    if (! twentyDaySimpleMovingAverageMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_sma20_' + twentyDaySimpleMovingAverageMap[filter])
+    return this
+}
+
+/**
+ * 50-Day simple moving average of closing price is the mean of the previous 50 days' closing prices.
+ *
+ * @param {'Price below SMA50'|'Price 10% below SMA50'|'Price 20% below SMA50'|'Price 30% below SMA50'|'Price 40% below SMA50'|'Price 50% below SMA50'|'Price above SMA50'|'Price 10% above SMA50'|'Price 20% above SMA50'|'Price 30% above SMA50'|'Price 40% above SMA50'|'Price 50% above SMA50'|'Price crossed SMA50'|'Price crossed SMA50 above'|'Price crossed SMA50 below'|'SMA50 crossed SMA20'|'SMA50 crossed SMA20 above'|'SMA50 crossed SMA20 below'|'SMA50 crossed SMA200'|'SMA50 crossed SMA200 above'|'SMA50 crossed SMA200 below'|'SMA50 above SMA20'|'SMA50 below SMA20'|'SMA50 above SMA200'|'SMA50 below SMA200'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.fiftyDaySimpleMovingAverage = function (filter) {
+    if (! fiftyDaySimpleMovingAverageMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_sma50_' + fiftyDaySimpleMovingAverageMap[filter])
+    return this
+}
+
+/**
+ * 200-Day simple moving average of closing price is the mean of the previous 200 days' closing prices.
+ *
+ * @param {'Price below SMA200'|'Price 10% below SMA200'|'Price 20% below SMA200'|'Price 30% below SMA200'|'Price 40% below SMA200'|'Price 50% below SMA200'|'Price 60% below SMA200'|'Price 70% below SMA200'|'Price 80% below SMA200'|'Price 90% below SMA200'|'Price above SMA200'|'Price 10% above SMA200'|'Price 20% above SMA200'|'Price 30% above SMA200'|'Price 40% above SMA200'|'Price 50% above SMA200'|'Price 60% above SMA200'|'Price 70% above SMA200'|'Price 80% above SMA200'|'Price 90% above SMA200'|'Price 100% above SMA200'|'Price crossed SMA200'|'Price crossed SMA200 above'|'Price crossed SMA200 below'|'SMA200 crossed SMA20'|'SMA200 crossed SMA20 above'|'SMA200 crossed SMA20 below'|'SMA200 crossed SMA50'|'SMA200 crossed SMA50 above'|'SMA200 crossed SMA50 below'|'SMA200 above SMA20'|'SMA200 below SMA20'|'SMA200 above SMA50'|'SMA200 below SMA50'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.twoHundredDaySimpleMovingAverage = function (filter) {
+    if (! twoHundredDaySimpleMovingAverageMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_sma200_' + twoHundredDaySimpleMovingAverageMap[filter])
+    return this
+}
+
+/**
+ * The difference between previous's close price and today's last price.
+ *
+ * @param {'Up'|'Up 1%'|'Up 2%'|'Up 3%'|'Up 4%'|'Up 5%'|'Up 6%'|'Up 7%'|'Up 8%'|'Up 9%'|'Up 10%'|'Up 15%'|'Up 20%'|'Down'|'Down 1%'|'Down 2%'|'Down 3%'|'Down 4%'|'Down 5%'|'Down 6%'|'Down 7%'|'Down 8%'|'Down 9%'|'Down 10%'|'Down 15%'|'Down 20%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.change = function (filter) {
+    if (! changeMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_change_' + changeMap[filter])
+    return this
+}
+
+/**
+ * The difference between today's open price and today's last price.
+ *
+ * @param {'Up'|'Up 1%'|'Up 2%'|'Up 3%'|'Up 4%'|'Up 5%'|'Up 6%'|'Up 7%'|'Up 8%'|'Up 9%'|'Up 10%'|'Up 15%'|'Up 20%'|'Down'|'Down 1%'|'Down 2%'|'Down 3%'|'Down 4%'|'Down 5%'|'Down 6%'|'Down 7%'|'Down 8%'|'Down 9%'|'Down 10%'|'Down 15%'|'Down 20%'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.changeFromOpen = function (filter) {
+    if (! changeFromOpenMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_changeopen_' + changeFromOpenMap[filter])
+    return this
+}
+
+/**
+ * Maximum/minimum of previous 20 days' highs/lows.
+ *
+ * @param {'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.twentyDayHighLow = function (filter) {
+    if (! twentyDayHighLowMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_highlow20d_' + twentyDayHighLowMap[filter])
+    return this
+}
+
+/**
+ * Maximum/minimum of previous 50 days' highs/lows.
+ *
+ * @param {'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.fiftyDayHighLow = function (filter) {
+    if (! fiftyDayHighLowMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_highlow50d_' + fiftyDayHighLowMap[filter])
+    return this
+}
+
+/**
+ * Maximum/minimum of previous 52 weeks' highs/lows.
+ *
+ * @param {'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'60% or more below High'|'70% or more below High'|'80% or more below High'|'90% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'60% or more above Low'|'70% or more above Low'|'80% or more above Low'|'90% or more above Low'|'100% or more above Low'|'120% or more above Low'|'150% or more above Low'|'200% or more above Low'|'300% or more above Low'|'500% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.fiftyTwoWeekHighLow = function (filter) {
+    if (! fiftyTwoWeekHighLowMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_highlow52w_' + fiftyTwoWeekHighLowMap[filter])
+    return this
+}
+
+/**
+ * A chart pattern is a distinct formation on a stock chart that creates a trading signal, or a sign of future price movements. Chartists use these patterns to identify current trends and trend reversals and to trigger buy and sell signals.
+ *
+ * @param {'Horizontal S/R'|'Horizontal S/R (Strong)'|'TL Resistance'|'TL Resistance (Strong)'|'TL Support'|'TL Support (Strong)'|'Wedge Up'|'Wedge Up (Strong)'|'Wedge Down'|'Wedge Down (Strong)'|'Triangle Ascending'|'Triangle Ascending (Strong)'|'Triangle Descending'|'Triangle Descending (Strong)'|'Wedge'|'Wedge (Strong)'|'Channel Up'|'Channel Up (Strong)'|'Channel Down'|'Channel Down (Strong)'|'Channel'|'Channel (Strong)'|'Double Top'|'Double Bottom'|'Multiple Top'|'Multiple Bottom'|'Head & Shoulders'|'Head & Shoulders Inverse'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.pattern = function (filter) {
+    if (! patternMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_pattern_' + patternMap[filter])
+    return this
+}
+
+/**
+ * Candlesticks are usually composed of the body (black or white), an upper and a lower shadow (wick). The wick illustrates the highest and lowest traded prices of a stock during the time interval represented. The body illustrates the opening and closing trades.
+ *
+ * @param {'Long Lower Shadow'|'Long Upper Shadow'|'Hammer'|'Inverted Hammer'|'Spinning Top White'|'Spinning Top Black'|'Doji'|'Dragonfly Doji'|'Gravestone Doji'|'Marubozu White'|'Marubozu Black'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.candlestick = function (filter) {
+    if (! candlestickMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_candlestick_' + candlestickMap[filter])
+    return this
+}
+
+/**
+ * A measure of a stock’s price volatility relative to the market. An asset with a beta of 0 means that its price is not at all correlated with the market. A positive beta means that the asset generally follows the market. A negative beta shows that the asset inversely follows the market, decreases in value if the market goes up.
+ *
+ * @param {'Under 0'|'Under 0.5'|'Under 1'|'Under 1.5'|'Under 2'|'Over 0'|'Over 0.5'|'Over 1'|'Over 1.5'|'Over 2'|'Over 2.5'|'Over 3'|'Over 4'|'0 to 0.5'|'0 to 1'|'0.5 to 1'|'0.5 to 1.5'|'1 to 1.5'|'1 to 2'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.beta = function (filter) {
+    if (! betaMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_beta_' + betaMap[filter])
+    return this
+}
+
+/**
+ * A measure of stock volatility. The Average True Range is an exponential moving average (14-days) of the True Ranges. The range of a day's trading is high−low, True Range extends it to yesterday's closing price if it was outside of today's range, True Range = max(high,closeprev) − min(low,closeprev)
+ *
+ * @param {'Over 0.25'|'Over 0.5'|'Over 0.75'|'Over 1'|'Over 1.5'|'Over 2'|'Over 2.5'|'Over 3'|'Over 3.5'|'Over 4'|'Over 4.5'|'Over 5'|'Under 0.25'|'Under 0.5'|'Under 0.75'|'Under 1'|'Under 1.5'|'Under 2'|'Under 2.5'|'Under 3'|'Under 3.5'|'Under 4'|'Under 4.5'|'Under 5'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.averageTrueRange = function (filter) {
+    if (! averageTrueRangeMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ta_averagetruerange_' + averageTrueRangeMap[filter])
+    return this
+}
+
+/**
+ * The average number of shares traded in a security per day.
+ *
+ * @param {'Under 50K'|'Under 100K'|'Under 500K'|'Under 750K'|'Under 1M'|'Over 50K'|'Over 100K'|'Over 200K'|'Over 300K'|'Over 400K'|'Over 500K'|'Over 750K'|'Over 1M'|'Over 2M'|'100K to 500K'|'100K to 1M'|'500K to 1M'|'500K to 10M'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.averageVolume = function (filter) {
+    if (! averageVolumeMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_avgvol_' + averageVolumeMap[filter])
+    return this
+}
+
+/**
+ * Ratio between current volume and 3-month average, intraday adjusted.
+ *
+ * @param {'Over 10'|'Over 5'|'Over 3'|'Over 2'|'Over 1.5'|'Over 1'|'Over 0.75'|'Over 0.5'|'Over 0.25'|'Under 2'|'Under 1.5'|'Under 1'|'Under 0.75'|'Under 0.5'|'Under 0.25'|'Under 0.1'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.relativeVolume = function (filter) {
+    if (! relativeVolumeMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_relvol_' + relativeVolumeMap[filter])
+    return this
+}
+
+/**
+ * Number of shares traded today.
+ *
+ * @param {'Under 50K'|'Under 100K'|'Under 500K'|'Under 750K'|'Under 1M'|'Over 0'|'Over 50K'|'Over 100K'|'Over 200K'|'Over 300K'|'Over 400K'|'Over 500K'|'Over 750K'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.currentVolume = function (filter) {
+    if (! currentVolumeMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_curvol_' + currentVolumeMap[filter])
+    return this
+}
+
+/**
+ * The current stock price.
+ *
+ * @param {'Under $1'|'Under $2'|'Under $3'|'Under $4'|'Under $5'|'Under $7'|'Under $10'|'Under $15'|'Under $20'|'Under $30'|'Under $40'|'Under $50'|'Over $1'|'Over $2'|'Over $3'|'Over $4'|'Over $5'|'Over $7'|'Over $10'|'Over $15'|'Over $20'|'Over $30'|'Over $40'|'Over $50'|'Over $60'|'Over $70'|'Over $80'|'Over $90'|'Over $100'|'$1 to $5'|'$1 to $10'|'$1 to $20'|'$5 to $10'|'$5 to $20'|'$5 to $50'|'$10 to $20'|'$10 to $50'|'$20 to $50'|'$50 to $100'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.price = function (filter) {
+    if (! priceMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_price_' + priceMap[filter])
+    return this
+}
+
+/**
+ * Analysts' mean target price.
+ *
+ * @param {'50% Above Price'|'40% Above Price'|'30% Above Price'|'20% Above Price'|'10% Above Price'|'5% Above Price'|'Above Price'|'Below Price'|'5% Below Price'|'10% Below Price'|'20% Below Price'|'30% Below Price'|'40% Below Price'|'50% Below Price'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.targetPrice = function (filter) {
+    if (! targetPriceMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('targetprice_' + targetPriceMap[filter])
+    return this
+}
+
+/**
+ * Date when company had an IPO.
+ *
+ * @param {'Today'|'Yesterday'|'In the last week'|'In the last month'|'In the last quarter'|'In the last year'|'In the last 2 years'|'In the last 3 years'|'In the last 5 years'|'More than a year ago'|'More than 5 years ago'|'More than 10 years ago'|'More than 15 years ago'|'More than 20 years ago'|'More than 25 years ago'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.ipoDate = function (filter) {
+    if (! ipoDateMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('ipodate_' + ipoDateMap[filter])
+    return this
+}
+
+/**
+ * Shares outstanding represent the total number of shares issued by a corporation and held by its shareholders.
+ *
+ * @param {'Under 1M'|'Under 5M'|'Under 10M'|'Under 20M'|'Under 50M'|'Under 100M'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'|'Over 50M'|'Over 100M'|'Over 200M'|'Over 500M'|'Over 1000M'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.sharesOutstanding = function (filter) {
+    if (! sharesOutstandingMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_outstanding_' + sharesOutstandingMap[filter])
+    return this
+}
+
+/**
+ * Float is the number of stock shares that are available for trading to the public. This doesn't include shares held by insiders.
+ *
+ * @param {'Under 1M'|'Under 5M'|'Under 10M'|'Under 20M'|'Under 50M'|'Under 100M'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'|'Over 50M'|'Over 100M'|'Over 200M'|'Over 500M'|'Over 1000M'} filter Filter
+ * @returns {this} this
+ */
+FinVizScreener.prototype.float = function (filter) {
+    if (! floatMap[filter]) {
+        throw Error('Unknown filter: ' + filter)
+    }
+    this._filters.push('sh_float_' + floatMap[filter])
+    return this
+}
+
+/**
+ * TA Signal
+ *
+ * @param {'Top Gainers'|'Top Losers'|'New High'|'New Low'|'Most Volatile'|'Most Active'|'Unusual Volume'|'Overbought'|'Oversold'|'Downgrades'|'Upgrades'|'Earnings Before'|'Earnings After'|'Recent Insider Buying'|'Recent Insider Selling'|'Major News'|'Horizontal S/R'|'TL Resistance'|'TL Support'|'Wedge Up'|'Wedge Down'|'Triangle Ascending'|'Triangle Descending'|'Wedge'|'Channel Up'|'Channel Down'|'Channel'|'Double Top'|'Double Bottom'|'Multiple Top'|'Multiple Bottom'|'Head & Shoulders'|'Head & Shoulders Inverse'} signal TA signal
+ * @returns {this} this
+ */
+FinVizScreener.prototype.signal = function (signal) {
+    if (! signalsMap[signal]) {
+        throw Error('Unknown signal: ' + signal)
+    }
+    this._signal = signalsMap[signal]
+    return this
+}
 
 module.exports = FinVizScreener

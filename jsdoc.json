@@ -7,6 +7,9 @@
   "tags": {
     "allowUnknownTags": ["typicalname"]
   },
+  "plugins": [
+    "jsdoc-ts-utils"
+  ],
   "opts": {
     "encoding": "utf8",
     "recurse": true
