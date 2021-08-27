@@ -32,7 +32,6 @@ const defaults = {
  */
 class FinVizScreener {
     /**
-     * @constructor
      * @param {Options} options Options
      */
     constructor(options) {

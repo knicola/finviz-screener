@@ -22,7 +22,7 @@ const output = jsdoc2md.renderSync({
     'module-index-format': 'none',
     'example-lang': 'js',
     configure: 'jsdoc.json',
-    source: 'src/node.js',
+    source: 'src/index.js',
     template: fs.readFileSync(path.join(__dirname, 'template.hbs'), 'utf8'),
     partial: path.join(__dirname, 'partials/**/*.hbs'),
     helper: path.join(__dirname, 'helpers/*.js'),
