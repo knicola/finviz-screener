@@ -45,7 +45,7 @@ console.log(tickers) //=> ['AAPL', 'MSFT', 'IBM', ... ]
 See [docs/API.md](docs/API.md) file for the full list of available methods.
 
 ## Development
-This library is built using [file generators](scripts/). They do most of the heavy lifting around here by generating the "filter" [methods](src/finviz.js) and [tests](tests/finviz.spec.js), the [typescript definitions](types/index.d.ts) and the [API documentation](docs/API.md) 🎉.
+This library is built using [file generators](scripts/). They do most of the heavy lifting around here by generating the "filter" [methods](src/finviz.js) and [tests](tests/finviz.spec.js), the [typescript definitions](types/finviz.d.ts) and the [API documentation](docs/API.md) 🎉.
 
 Any changes to this library, must be introduced to the file generators or the [`src/index.js`](src/index.js) and [`src/base.js`](src/base.js) files. Make sure to run `npm run build` and review the changes before submitting anything.
 
