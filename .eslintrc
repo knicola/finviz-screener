@@ -1,5 +1,5 @@
 {
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended", "plugin:jsdoc/recommended"],
     "env": { "node": true, "browser": true, "es6": true, "jest": true },
     "parserOptions": { "ecmaVersion": 2018 },
     "rules": {
@@ -30,6 +30,9 @@
                 "+": true,
                 "-": true
             }
-        }]
-    }
+        }],
+        "jsdoc/valid-types": 0,
+        "jsdoc/check-tag-names": ["warn", { "definedTags": ["typicalname"] }]
+    },
+    "plugins": [ "jsdoc" ]
 }

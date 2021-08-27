@@ -33,7 +33,7 @@
     "build:code": "node scripts/code/generate",
     "build:docs": "node scripts/docs/generate",
     "build:types": "node scripts/types/generate",
-    "build": "npm run build:code && npm run lint && npm test && npm run build:types && npm run build:docs"
+    "build": "npm run build:code && npm run build:types && npm run build:docs"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -46,6 +46,7 @@
     "change-case": "^4.1.2",
     "ejs": "^3.1.6",
     "eslint": "^7.32.0",
+    "eslint-plugin-jsdoc": "^36.0.8",
     "htmlparser2": "^6.1.0",
     "jest": "^27.0.6",
     "jsdoc": "^3.6.7",
