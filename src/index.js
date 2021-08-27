@@ -25,3 +25,7 @@ function finviz(options) {
 finviz.FinVizScreener = FinVizScreener
 
 module.exports = finviz
+// Allows for { finviz }
+module.exports.finviz = finviz
+// Allows for strict ES Module support
+module.exports.default = finviz
