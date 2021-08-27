@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.2] - 2022-08-27
+### Added
+* Support for named exports.
+* Support for strict ESM.
+### Fixed
+* Typescript definitions to improve intellisense.
+
 ## [1.1.1] - 2021-08-20
 ### Fixed
 * Fixed API.md link in README file.
