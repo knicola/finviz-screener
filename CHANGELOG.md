@@ -6,7 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.1.2] - 2022-08-27
+## [1.1.3] - 2021-10-16
+### Changed
+* Bump `@types/jest` from 27.0.1 to 27.0.2
+* Bump `eslint` from 7.32.0 to 8.0.1
+* Bump `eslint-plugin-jsdoc` from 36.0.8 to 36.1.1
+* Bump `htmlparser2` from 6.1.0 to 7.1.2
+* Bump `jest` from 27.0.6 to 27.2.5
+* Bump `jsdoc-to-markdown` from 7.0.1 to 7.1.0
+* Bump `jsdoc-ts-utils` from 2.0.0 to 2.0.1
+* Bump `axios` from 0.21.1 to 0.23.0
+
+## [1.1.2] - 2021-08-27
 ### Added
 * Support for named exports.
 * Support for strict ESM.
