@@ -71,9 +71,7 @@ class FinVizScreener {
 
             // find next page
             const $nextPage = $('.screener_pagination').children().last()
-            nextPage = $nextPage.children().first().text().includes('next')
-                ? $nextPage.prop('href')
-                : ''
+            nextPage = $nextPage.hasClass('is-next') ? $nextPage.prop('href') : ''
         } while(nextPage && ! cancel)
 
         return tickers

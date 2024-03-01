@@ -35,6 +35,7 @@
     * [fv.salesGrowthpast5Years(filter)](#FinVizScreener+salesGrowthpast5Years) ⇒ <code>this</code>
     * [fv.epsGrowthqtrOverQtr(filter)](#FinVizScreener+epsGrowthqtrOverQtr) ⇒ <code>this</code>
     * [fv.salesGrowthqtrOverQtr(filter)](#FinVizScreener+salesGrowthqtrOverQtr) ⇒ <code>this</code>
+    * [fv.earningsRevenueSurprise(filter)](#FinVizScreener+earningsRevenueSurprise) ⇒ <code>this</code>
     * [fv.dividendYield(filter)](#FinVizScreener+dividendYield) ⇒ <code>this</code>
     * [fv.returnOnAssets(filter)](#FinVizScreener+returnOnAssets) ⇒ <code>this</code>
     * [fv.returnOnEquity(filter)](#FinVizScreener+returnOnEquity) ⇒ <code>this</code>
@@ -68,6 +69,7 @@
     * [fv.twentyDayHighLow(filter)](#FinVizScreener+twentyDayHighLow) ⇒ <code>this</code>
     * [fv.fiftyDayHighLow(filter)](#FinVizScreener+fiftyDayHighLow) ⇒ <code>this</code>
     * [fv.fiftyTwoWeekHighLow(filter)](#FinVizScreener+fiftyTwoWeekHighLow) ⇒ <code>this</code>
+    * [fv.allTimeHighLow(filter)](#FinVizScreener+allTimeHighLow) ⇒ <code>this</code>
     * [fv.pattern(filter)](#FinVizScreener+pattern) ⇒ <code>this</code>
     * [fv.candlestick(filter)](#FinVizScreener+candlestick) ⇒ <code>this</code>
     * [fv.beta(filter)](#FinVizScreener+beta) ⇒ <code>this</code>
@@ -80,6 +82,13 @@
     * [fv.ipoDate(filter)](#FinVizScreener+ipoDate) ⇒ <code>this</code>
     * [fv.sharesOutstanding(filter)](#FinVizScreener+sharesOutstanding) ⇒ <code>this</code>
     * [fv.float(filter)](#FinVizScreener+float) ⇒ <code>this</code>
+    * [fv.singleCategory(filter)](#FinVizScreener+singleCategory) ⇒ <code>this</code>
+    * [fv.assetType(filter)](#FinVizScreener+assetType) ⇒ <code>this</code>
+    * [fv.sponsor(filter)](#FinVizScreener+sponsor) ⇒ <code>this</code>
+    * [fv.netExpenseRatio(filter)](#FinVizScreener+netExpenseRatio) ⇒ <code>this</code>
+    * [fv.netFundFlows(filter)](#FinVizScreener+netFundFlows) ⇒ <code>this</code>
+    * [fv.annualizedReturn(filter)](#FinVizScreener+annualizedReturn) ⇒ <code>this</code>
+    * [fv.tags(filter)](#FinVizScreener+tags) ⇒ <code>this</code>
     * [fv.signal(signal)](#FinVizScreener+signal) ⇒ <code>this</code>
 
 
@@ -148,7 +157,7 @@ A major index membership of a stock.
 
 **Arguments**
 
-- **filter (<code>&#x27;S&amp;P 500&#x27;</code> | <code>&#x27;DJIA&#x27;</code>)** : Filter
+- **filter (<code>&#x27;S&amp;P 500&#x27;</code> | <code>&#x27;NASDAQ 100&#x27;</code> | <code>&#x27;DJIA&#x27;</code> | <code>&#x27;RUSSELL 2000&#x27;</code>)** : Filter
 
 **Returns**
 
@@ -414,7 +423,7 @@ EPS is the portion of a company's profit allocated to each outstanding share of 
 
 ### fv.salesGrowthqtrOverQtr(filter) ⇒ <code>this</code>
 
-Quarter over quarter growth.
+Quarter over quarter growth compared on a year over year basis.
 
 **Arguments**
 
@@ -425,11 +434,26 @@ Quarter over quarter growth.
 - **<code>this</code>** : this
 
 
+<br><a name="FinVizScreener+earningsRevenueSurprise"></a>
+
+### fv.earningsRevenueSurprise(filter) ⇒ <code>this</code>
+
+Company's reported earnings/revenue are above or below analysts' expectations.
+
+**Arguments**
+
+- **filter (<code>&#x27;Both positive (&gt;0%)&#x27;</code> | <code>&#x27;Both met (0%)&#x27;</code> | <code>&#x27;Both negative (&lt;0%)&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
 <br><a name="FinVizScreener+dividendYield"></a>
 
 ### fv.dividendYield(filter) ⇒ <code>this</code>
 
-The dividend yield equals the annual dividend per share divided by the stock’s price. This measurement tells what percentage return a company pays out to shareholders in the form of dividends.
+The dividend yield equals the annual dividend per share divided by the stock’s price. This measurement tells what percentage return a company pays out to shareholders in the form of dividends. If there is no forward dividend estimate available, trailing twelve month (TTM) value is used.
 
 **Arguments**
 
@@ -703,7 +727,7 @@ Stocks with options and/or available to sell short.
 
 **Arguments**
 
-- **filter (<code>&#x27;Optionable&#x27;</code> | <code>&#x27;Shortable&#x27;</code> | <code>&#x27;Optionable and shortable&#x27;</code>)** : Filter
+- **filter (<code>&#x27;Optionable&#x27;</code> | <code>&#x27;Shortable&#x27;</code> | <code>&#x27;Not optionable&#x27;</code> | <code>&#x27;Not shortable&#x27;</code> | <code>&#x27;Optionable and shortable&#x27;</code> | <code>&#x27;Optionable and not shortable&#x27;</code> | <code>&#x27;Not optionable and shortable&#x27;</code> | <code>&#x27;Not optionable and not shortable&#x27;</code>)** : Filter
 
 **Returns**
 
@@ -920,6 +944,21 @@ Maximum/minimum of previous 52 weeks' highs/lows.
 - **<code>this</code>** : this
 
 
+<br><a name="FinVizScreener+allTimeHighLow"></a>
+
+### fv.allTimeHighLow(filter) ⇒ <code>this</code>
+
+Maximum/minimum of all-time highs/lows.
+
+**Arguments**
+
+- **filter (<code>&#x27;New High&#x27;</code> | <code>&#x27;New Low&#x27;</code> | <code>&#x27;5% or more below High&#x27;</code> | <code>&#x27;10% or more below High&#x27;</code> | <code>&#x27;15% or more below High&#x27;</code> | <code>&#x27;20% or more below High&#x27;</code> | <code>&#x27;30% or more below High&#x27;</code> | <code>&#x27;40% or more below High&#x27;</code> | <code>&#x27;50% or more below High&#x27;</code> | <code>&#x27;60% or more below High&#x27;</code> | <code>&#x27;70% or more below High&#x27;</code> | <code>&#x27;80% or more below High&#x27;</code> | <code>&#x27;90% or more below High&#x27;</code> | <code>&#x27;0-3% below High&#x27;</code> | <code>&#x27;0-5% below High&#x27;</code> | <code>&#x27;0-10% below High&#x27;</code> | <code>&#x27;5% or more above Low&#x27;</code> | <code>&#x27;10% or more above Low&#x27;</code> | <code>&#x27;15% or more above Low&#x27;</code> | <code>&#x27;20% or more above Low&#x27;</code> | <code>&#x27;30% or more above Low&#x27;</code> | <code>&#x27;40% or more above Low&#x27;</code> | <code>&#x27;50% or more above Low&#x27;</code> | <code>&#x27;60% or more above Low&#x27;</code> | <code>&#x27;70% or more above Low&#x27;</code> | <code>&#x27;80% or more above Low&#x27;</code> | <code>&#x27;90% or more above Low&#x27;</code> | <code>&#x27;100% or more above Low&#x27;</code> | <code>&#x27;120% or more above Low&#x27;</code> | <code>&#x27;150% or more above Low&#x27;</code> | <code>&#x27;200% or more above Low&#x27;</code> | <code>&#x27;300% or more above Low&#x27;</code> | <code>&#x27;500% or more above Low&#x27;</code> | <code>&#x27;0-3% above Low&#x27;</code> | <code>&#x27;0-5% above Low&#x27;</code> | <code>&#x27;0-10% above Low&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
 <br><a name="FinVizScreener+pattern"></a>
 
 ### fv.pattern(filter) ⇒ <code>this</code>
@@ -1018,7 +1057,7 @@ Number of shares traded today.
 
 **Arguments**
 
-- **filter (<code>&#x27;Under 50K&#x27;</code> | <code>&#x27;Under 100K&#x27;</code> | <code>&#x27;Under 500K&#x27;</code> | <code>&#x27;Under 750K&#x27;</code> | <code>&#x27;Under 1M&#x27;</code> | <code>&#x27;Over 0&#x27;</code> | <code>&#x27;Over 50K&#x27;</code> | <code>&#x27;Over 100K&#x27;</code> | <code>&#x27;Over 200K&#x27;</code> | <code>&#x27;Over 300K&#x27;</code> | <code>&#x27;Over 400K&#x27;</code> | <code>&#x27;Over 500K&#x27;</code> | <code>&#x27;Over 750K&#x27;</code> | <code>&#x27;Over 1M&#x27;</code> | <code>&#x27;Over 2M&#x27;</code> | <code>&#x27;Over 5M&#x27;</code> | <code>&#x27;Over 10M&#x27;</code> | <code>&#x27;Over 20M&#x27;</code>)** : Filter
+- **filter (<code>&#x27;Under 50K&#x27;</code> | <code>&#x27;Under 100K&#x27;</code> | <code>&#x27;Under 500K&#x27;</code> | <code>&#x27;Under 750K&#x27;</code> | <code>&#x27;Under 1M&#x27;</code> | <code>&#x27;Over 0&#x27;</code> | <code>&#x27;Over 50K&#x27;</code> | <code>&#x27;Over 100K&#x27;</code> | <code>&#x27;Over 200K&#x27;</code> | <code>&#x27;Over 300K&#x27;</code> | <code>&#x27;Over 400K&#x27;</code> | <code>&#x27;Over 500K&#x27;</code> | <code>&#x27;Over 750K&#x27;</code> | <code>&#x27;Over 1M&#x27;</code> | <code>&#x27;Over 2M&#x27;</code> | <code>&#x27;Over 5M&#x27;</code> | <code>&#x27;Over 10M&#x27;</code> | <code>&#x27;Over 20M&#x27;</code> | <code>&#x27;Over 50% shares float&#x27;</code> | <code>&#x27;Over 100% shares float&#x27;</code>)** : Filter
 
 **Returns**
 
@@ -1093,7 +1132,112 @@ Float is the number of stock shares that are available for trading to the public
 
 **Arguments**
 
-- **filter (<code>&#x27;Under 1M&#x27;</code> | <code>&#x27;Under 5M&#x27;</code> | <code>&#x27;Under 10M&#x27;</code> | <code>&#x27;Under 20M&#x27;</code> | <code>&#x27;Under 50M&#x27;</code> | <code>&#x27;Under 100M&#x27;</code> | <code>&#x27;Over 1M&#x27;</code> | <code>&#x27;Over 2M&#x27;</code> | <code>&#x27;Over 5M&#x27;</code> | <code>&#x27;Over 10M&#x27;</code> | <code>&#x27;Over 20M&#x27;</code> | <code>&#x27;Over 50M&#x27;</code> | <code>&#x27;Over 100M&#x27;</code> | <code>&#x27;Over 200M&#x27;</code> | <code>&#x27;Over 500M&#x27;</code> | <code>&#x27;Over 1000M&#x27;</code>)** : Filter
+- **filter (<code>&#x27;Under 1M&#x27;</code> | <code>&#x27;Under 5M&#x27;</code> | <code>&#x27;Under 10M&#x27;</code> | <code>&#x27;Under 20M&#x27;</code> | <code>&#x27;Under 50M&#x27;</code> | <code>&#x27;Under 100M&#x27;</code> | <code>&#x27;Over 1M&#x27;</code> | <code>&#x27;Over 2M&#x27;</code> | <code>&#x27;Over 5M&#x27;</code> | <code>&#x27;Over 10M&#x27;</code> | <code>&#x27;Over 20M&#x27;</code> | <code>&#x27;Over 50M&#x27;</code> | <code>&#x27;Over 100M&#x27;</code> | <code>&#x27;Over 200M&#x27;</code> | <code>&#x27;Over 500M&#x27;</code> | <code>&#x27;Over 1000M&#x27;</code> | <code>&#x27;Under 10%&#x27;</code> | <code>&#x27;Under 20%&#x27;</code> | <code>&#x27;Under 30%&#x27;</code> | <code>&#x27;Under 40%&#x27;</code> | <code>&#x27;Under 50%&#x27;</code> | <code>&#x27;Under 60%&#x27;</code> | <code>&#x27;Under 70%&#x27;</code> | <code>&#x27;Under 80%&#x27;</code> | <code>&#x27;Under 90%&#x27;</code> | <code>&#x27;Over 10%&#x27;</code> | <code>&#x27;Over 20%&#x27;</code> | <code>&#x27;Over 30%&#x27;</code> | <code>&#x27;Over 40%&#x27;</code> | <code>&#x27;Over 50%&#x27;</code> | <code>&#x27;Over 60%&#x27;</code> | <code>&#x27;Over 70%&#x27;</code> | <code>&#x27;Over 80%&#x27;</code> | <code>&#x27;Over 90%&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
+<br><a name="FinVizScreener+singleCategory"></a>
+
+### fv.singleCategory(filter) ⇒ <code>this</code>
+
+Single category of each ETF.
+
+**Arguments**
+
+- **filter (<code>&#x27;Bonds - Broad Market&#x27;</code> | <code>&#x27;Bonds - Convertible&#x27;</code> | <code>&#x27;Bonds - Corporate&#x27;</code> | <code>&#x27;Bonds - Inflation protected&#x27;</code> | <code>&#x27;Bonds - Leveraged / Inverse&#x27;</code> | <code>&#x27;Bonds - Mortgage&#x27;</code> | <code>&#x27;Bonds - Municipal&#x27;</code> | <code>&#x27;Bonds - Non Government Asset Backed Securities&#x27;</code> | <code>&#x27;Bonds - Treasury &amp; Government&#x27;</code> | <code>&#x27;Commodities &amp; Metals - Agricultural&#x27;</code> | <code>&#x27;Commodities &amp; Metals - Diversified Commodities&#x27;</code> | <code>&#x27;Commodities &amp; Metals - Energy&#x27;</code> | <code>&#x27;Commodities &amp; Metals - Gold / Metals&#x27;</code> | <code>&#x27;Commodities &amp; Metals - Leveraged / Inverse&#x27;</code> | <code>&#x27;Currency&#x27;</code> | <code>&#x27;Currency - Leveraged / Inverse&#x27;</code> | <code>&#x27;Equity - Leveraged / Inverse&#x27;</code> | <code>&#x27;Global or ExUS Equities - Broad / Regional&#x27;</code> | <code>&#x27;Global or ExUS Equities - Country Specific&#x27;</code> | <code>&#x27;Global or ExUS Equities - Dividend &amp; Fundamental&#x27;</code> | <code>&#x27;Global or ExUS Equities - Factor &amp; Thematic&#x27;</code> | <code>&#x27;Global or ExUS Equities - Industry Sector&#x27;</code> | <code>&#x27;Global or ExUS Equities - Quant Strat&#x27;</code> | <code>&#x27;Other Asset Types - Leveraged / Inverse&#x27;</code> | <code>&#x27;Other Asset Types - Multi-Asset / Other&#x27;</code> | <code>&#x27;Target Date / Multi-Asset - Leveraged / Inverse&#x27;</code> | <code>&#x27;Target Date / Multi-Asset - Other&#x27;</code> | <code>&#x27;US Equities - Broad Market &amp; Size&#x27;</code> | <code>&#x27;US Equities - Dividend &amp; Fundamental&#x27;</code> | <code>&#x27;US Equities - Factor &amp; Thematic&#x27;</code> | <code>&#x27;US Equities - Industry Sector&#x27;</code> | <code>&#x27;US Equities - Quant Strat&#x27;</code> | <code>&#x27;US Equities - US Style&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
+<br><a name="FinVizScreener+assetType"></a>
+
+### fv.assetType(filter) ⇒ <code>this</code>
+
+The asset type of the ETF.
+
+**Arguments**
+
+- **filter (<code>&#x27;Bonds&#x27;</code> | <code>&#x27;Carbon Trading&#x27;</code> | <code>&#x27;Closed End Funds&#x27;</code> | <code>&#x27;Commodities &amp; Metals&#x27;</code> | <code>&#x27;CryptoCurrency&#x27;</code> | <code>&#x27;Currency&#x27;</code> | <code>&#x27;Equities (Stocks)&#x27;</code> | <code>&#x27;Equities (Stocks) - IPO Based&#x27;</code> | <code>&#x27;Freight Futures&#x27;</code> | <code>&#x27;Hedge Fund Replication&#x27;</code> | <code>&#x27;MLP&#x27;</code> | <code>&#x27;Multi-Asset - Conservative&#x27;</code> | <code>&#x27;Multi-Asset - Growth / Aggressive&#x27;</code> | <code>&#x27;Multi-Asset - Moderate&#x27;</code> | <code>&#x27;Multi-Asset - Tactical / Active&#x27;</code> | <code>&#x27;Preferred Stock&#x27;</code> | <code>&#x27;Private Equity&#x27;</code> | <code>&#x27;SPAC&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
+<br><a name="FinVizScreener+sponsor"></a>
+
+### fv.sponsor(filter) ⇒ <code>this</code>
+
+The fund manager (ETF) or issuing bank (ETN).
+
+**Arguments**
+
+- **filter (<code>&#x27;Aberdeen&#x27;</code> | <code>&#x27;Absolute Investment Advisers&#x27;</code> | <code>&#x27;Academy AM&#x27;</code> | <code>&#x27;Acquirers Funds&#x27;</code> | <code>&#x27;Acruence Capital&#x27;</code> | <code>&#x27;ACSI Funds&#x27;</code> | <code>&#x27;ACV ETF&#x27;</code> | <code>&#x27;Adaptiv&#x27;</code> | <code>&#x27;ADAPTIVE INVESTMENTS&#x27;</code> | <code>&#x27;Adasina Social Capital&#x27;</code> | <code>&#x27;Advisor Shares&#x27;</code> | <code>&#x27;Advisors Asset Management&#x27;</code> | <code>&#x27;Advocate Capital Management&#x27;</code> | <code>&#x27;AGFiQ&#x27;</code> | <code>&#x27;Alexis Invests&#x27;</code> | <code>&#x27;Alger&#x27;</code> | <code>&#x27;AllianceBernstein&#x27;</code> | <code>&#x27;AllianzIM&#x27;</code> | <code>&#x27;Alpha Architect&#x27;</code> | <code>&#x27;AlphaMark&#x27;</code> | <code>&#x27;ALPS&#x27;</code> | <code>&#x27;Altrius Capital&#x27;</code> | <code>&#x27;AltShares&#x27;</code> | <code>&#x27;American Beacon&#x27;</code> | <code>&#x27;American Century Investments&#x27;</code> | <code>&#x27;Amplify Investments&#x27;</code> | <code>&#x27;Angel Oak&#x27;</code> | <code>&#x27;AOT INVEST&#x27;</code> | <code>&#x27;Applied Finance Funds&#x27;</code> | <code>&#x27;Aptus Capital Advisors&#x27;</code> | <code>&#x27;Argent Capital Management&#x27;</code> | <code>&#x27;ARK Funds&#x27;</code> | <code>&#x27;Armada ETF Advisors&#x27;</code> | <code>&#x27;ArrowShares&#x27;</code> | <code>&#x27;Astoria&#x27;</code> | <code>&#x27;ASYMshares&#x27;</code> | <code>&#x27;ATAC Funds&#x27;</code> | <code>&#x27;Avantis Investors&#x27;</code> | <code>&#x27;AXS Investments&#x27;</code> | <code>&#x27;Aztlan&#x27;</code> | <code>&#x27;BAD Investment&#x27;</code> | <code>&#x27;Bahl &amp; Gaynor&#x27;</code> | <code>&#x27;Ballast AM&#x27;</code> | <code>&#x27;Barclays&#x27;</code> | <code>&#x27;Barclays iPath&#x27;</code> | <code>&#x27;Beacon&#x27;</code> | <code>&#x27;Beyond Investing&#x27;</code> | <code>&#x27;Bitwise&#x27;</code> | <code>&#x27;Blackrock (iShares)&#x27;</code> | <code>&#x27;Blueprint Fund Management&#x27;</code> | <code>&#x27;BNY Mellon&#x27;</code> | <code>&#x27;BondBloxx&#x27;</code> | <code>&#x27;Bridges Capital&#x27;</code> | <code>&#x27;Bridgeway&#x27;</code> | <code>&#x27;Brookstone&#x27;</code> | <code>&#x27;Build Asset Management&#x27;</code> | <code>&#x27;Burney Investment&#x27;</code> | <code>&#x27;Bushido Capital&#x27;</code> | <code>&#x27;Cabana ETF&#x27;</code> | <code>&#x27;Calamos Investments&#x27;</code> | <code>&#x27;Cambiar Investors&#x27;</code> | <code>&#x27;Cambria Funds&#x27;</code> | <code>&#x27;Capital Group&#x27;</code> | <code>&#x27;Carbon Collective&#x27;</code> | <code>&#x27;Carbon Fund Advisors&#x27;</code> | <code>&#x27;CBOE Vest&#x27;</code> | <code>&#x27;Changebridge Capital&#x27;</code> | <code>&#x27;Clockwise Capital&#x27;</code> | <code>&#x27;Clouty&#x27;</code> | <code>&#x27;CNIC Funds&#x27;</code> | <code>&#x27;Columbia Management&#x27;</code> | <code>&#x27;Conductor ETF&#x27;</code> | <code>&#x27;Congress AMC&#x27;</code> | <code>&#x27;Convergence Investment Partners&#x27;</code> | <code>&#x27;ConvexityShares&#x27;</code> | <code>&#x27;CornerCap&#x27;</code> | <code>&#x27;Counterpoint Mutual Funds&#x27;</code> | <code>&#x27;Credit Suisse&#x27;</code> | <code>&#x27;CrossingBridge&#x27;</code> | <code>&#x27;Cultivar Funds&#x27;</code> | <code>&#x27;Davis Advisors&#x27;</code> | <code>&#x27;Day Hagan&#x27;</code> | <code>&#x27;Days Global Advisors&#x27;</code> | <code>&#x27;Defiance ETFs&#x27;</code> | <code>&#x27;Democracy Investments&#x27;</code> | <code>&#x27;Dimensional&#x27;</code> | <code>&#x27;Direxion Shares&#x27;</code> | <code>&#x27;Discipline Fund&#x27;</code> | <code>&#x27;Distillate Capital&#x27;</code> | <code>&#x27;DoubleLine Funds&#x27;</code> | <code>&#x27;DriveWealth&#x27;</code> | <code>&#x27;DWS&#x27;</code> | <code>&#x27;Dynamic Shares&#x27;</code> | <code>&#x27;Ecofin&#x27;</code> | <code>&#x27;Element Funds&#x27;</code> | <code>&#x27;Elevate Shares&#x27;</code> | <code>&#x27;Engine No. 1&#x27;</code> | <code>&#x27;EntrepreneurShares&#x27;</code> | <code>&#x27;Envestnet&#x27;</code> | <code>&#x27;ETF Managers Group&#x27;</code> | <code>&#x27;Euclid ETF&#x27;</code> | <code>&#x27;Evoke Advisors&#x27;</code> | <code>&#x27;Exchange Traded Concepts&#x27;</code> | <code>&#x27;F/m Investments&#x27;</code> | <code>&#x27;Fairlead Strategies&#x27;</code> | <code>&#x27;FCF Advisors&#x27;</code> | <code>&#x27;Federated Hermes&#x27;</code> | <code>&#x27;Fidelity&#x27;</code> | <code>&#x27;First Manhattan&#x27;</code> | <code>&#x27;First Pacific Advisors&#x27;</code> | <code>&#x27;First Trust&#x27;</code> | <code>&#x27;FIS&#x27;</code> | <code>&#x27;Flexshares (Northern Trust)&#x27;</code> | <code>&#x27;FolioBeyond&#x27;</code> | <code>&#x27;Formidable Funds&#x27;</code> | <code>&#x27;FormulaFolio Investments&#x27;</code> | <code>&#x27;Franklin Templeton&#x27;</code> | <code>&#x27;Freedom Day&#x27;</code> | <code>&#x27;FundX&#x27;</code> | <code>&#x27;Future Funds&#x27;</code> | <code>&#x27;Gadsden&#x27;</code> | <code>&#x27;GAMCO Investors&#x27;</code> | <code>&#x27;Gavekal Capital&#x27;</code> | <code>&#x27;Global X&#x27;</code> | <code>&#x27;God Bless&#x27;</code> | <code>&#x27;Goldman Sachs&#x27;</code> | <code>&#x27;Goose Hollow&#x27;</code> | <code>&#x27;Gotham ETF&#x27;</code> | <code>&#x27;GraniteShares&#x27;</code> | <code>&#x27;Grayscale&#x27;</code> | <code>&#x27;Grizzle&#x27;</code> | <code>&#x27;Guru Focus&#x27;</code> | <code>&#x27;Harbor Funds&#x27;</code> | <code>&#x27;Hartford Funds&#x27;</code> | <code>&#x27;Hashdex&#x27;</code> | <code>&#x27;Hennessy Funds&#x27;</code> | <code>&#x27;Horizon Kinetics&#x27;</code> | <code>&#x27;Howard Capital Management&#x27;</code> | <code>&#x27;Hoya Capital&#x27;</code> | <code>&#x27;Humankind&#x27;</code> | <code>&#x27;Hypatia Capital&#x27;</code> | <code>&#x27;iMGP Global Partner&#x27;</code> | <code>&#x27;Impact Shares&#x27;</code> | <code>&#x27;Index IQ&#x27;</code> | <code>&#x27;Infrastructure Capital Advisors&#x27;</code> | <code>&#x27;Innovative Portfolios&#x27;</code> | <code>&#x27;Innovator Management&#x27;</code> | <code>&#x27;Inspire Investing&#x27;</code> | <code>&#x27;Invesco&#x27;</code> | <code>&#x27;Ionic Capital Management&#x27;</code> | <code>&#x27;Jacob Funds&#x27;</code> | <code>&#x27;Janus&#x27;</code> | <code>&#x27;John Hancock Funds&#x27;</code> | <code>&#x27;JPMorgan Chase&#x27;</code> | <code>&#x27;Kaiju ETF Advisors&#x27;</code> | <code>&#x27;Kelly ETFs&#x27;</code> | <code>&#x27;Kingsbarn Capital&#x27;</code> | <code>&#x27;Kovitz&#x27;</code> | <code>&#x27;Krane Shares&#x27;</code> | <code>&#x27;Laffer Tengler&#x27;</code> | <code>&#x27;LeaderShares&#x27;</code> | <code>&#x27;Leatherback Asset Management&#x27;</code> | <code>&#x27;Leuthold Group&#x27;</code> | <code>&#x27;Liquid Strategies&#x27;</code> | <code>&#x27;Little Harbor Advisors&#x27;</code> | <code>&#x27;Logan Capital&#x27;</code> | <code>&#x27;Lyrical AM&#x27;</code> | <code>&#x27;Madison Funds&#x27;</code> | <code>&#x27;Main Management&#x27;</code> | <code>&#x27;Mairs &amp; Power&#x27;</code> | <code>&#x27;Matthews Asia&#x27;</code> | <code>&#x27;MAX ETNs&#x27;</code> | <code>&#x27;McElhenny Sheffield&#x27;</code> | <code>&#x27;Meet Kevin&#x27;</code> | <code>&#x27;Merk Investments&#x27;</code> | <code>&#x27;Merlyn AI&#x27;</code> | <code>&#x27;MicroSectors&#x27;</code> | <code>&#x27;MKAM ETF&#x27;</code> | <code>&#x27;MOHR Funds&#x27;</code> | <code>&#x27;Monarch Funds&#x27;</code> | <code>&#x27;Morgan Dempsey&#x27;</code> | <code>&#x27;Morgan Stanley&#x27;</code> | <code>&#x27;Motley Fool Asset Management&#x27;</code> | <code>&#x27;MUSQ&#x27;</code> | <code>&#x27;Nationwide&#x27;</code> | <code>&#x27;Natixis&#x27;</code> | <code>&#x27;NEOS Funds&#x27;</code> | <code>&#x27;Neuberger Berman&#x27;</code> | <code>&#x27;NEWDAY&#x27;</code> | <code>&#x27;Nuveen&#x27;</code> | <code>&#x27;OneAscent Investments&#x27;</code> | <code>&#x27;Optimize Advisors&#x27;</code> | <code>&#x27;Pacer Financial&#x27;</code> | <code>&#x27;Panagram&#x27;</code> | <code>&#x27;Parabla&#x27;</code> | <code>&#x27;Paralel Advisors&#x27;</code> | <code>&#x27;PGIM Investments&#x27;</code> | <code>&#x27;PIMCO&#x27;</code> | <code>&#x27;Pinnacle Dynamic Funds&#x27;</code> | <code>&#x27;PMV Capital&#x27;</code> | <code>&#x27;Point Bridge Capital&#x27;</code> | <code>&#x27;Principal Financial Services&#x27;</code> | <code>&#x27;ProcureAM&#x27;</code> | <code>&#x27;ProShares&#x27;</code> | <code>&#x27;Putnam Investments&#x27;</code> | <code>&#x27;Q3 All-Season&#x27;</code> | <code>&#x27;Qraft Technologies&#x27;</code> | <code>&#x27;R3 Global Capital&#x27;</code> | <code>&#x27;Rareview Funds&#x27;</code> | <code>&#x27;Rayliant&#x27;</code> | <code>&#x27;Reflection Asset Management&#x27;</code> | <code>&#x27;Regents Park Funds&#x27;</code> | <code>&#x27;Relative Sentiment&#x27;</code> | <code>&#x27;Renaissance&#x27;</code> | <code>&#x27;Returned Stack&#x27;</code> | <code>&#x27;Reverb&#x27;</code> | <code>&#x27;Robinson Capital&#x27;</code> | <code>&#x27;ROC Investments&#x27;</code> | <code>&#x27;Roundhill Financial&#x27;</code> | <code>&#x27;Running Oak&#x27;</code> | <code>&#x27;Saba Capital&#x27;</code> | <code>&#x27;Schwab&#x27;</code> | <code>&#x27;Segall Bryant &amp; Hamill&#x27;</code> | <code>&#x27;SEI Investments Company&#x27;</code> | <code>&#x27;Simplify ETF&#x27;</code> | <code>&#x27;Siren ETF&#x27;</code> | <code>&#x27;SmartETFs&#x27;</code> | <code>&#x27;Sofi&#x27;</code> | <code>&#x27;SonicShares&#x27;</code> | <code>&#x27;Sound ETF&#x27;</code> | <code>&#x27;Soundwatch&#x27;</code> | <code>&#x27;Sparkline Capital&#x27;</code> | <code>&#x27;Spear Invest&#x27;</code> | <code>&#x27;SPFunds&#x27;</code> | <code>&#x27;Spinnaker ETF Trust&#x27;</code> | <code>&#x27;Sprott Asset Management&#x27;</code> | <code>&#x27;State Street (SPDR)&#x27;</code> | <code>&#x27;Sterling Capital&#x27;</code> | <code>&#x27;STF Management&#x27;</code> | <code>&#x27;Strategas Asset Management&#x27;</code> | <code>&#x27;Strategy Shares&#x27;</code> | <code>&#x27;Strive Asset Management&#x27;</code> | <code>&#x27;Subversive ETFs&#x27;</code> | <code>&#x27;Summit Global Investments&#x27;</code> | <code>&#x27;SWAN Global Investments&#x27;</code> | <code>&#x27;Syntax&#x27;</code> | <code>&#x27;T. Rowe Price&#x27;</code> | <code>&#x27;Tactical Advantage&#x27;</code> | <code>&#x27;Tema&#x27;</code> | <code>&#x27;Teucrium&#x27;</code> | <code>&#x27;Texas Capital&#x27;</code> | <code>&#x27;THOR Financial Technologies&#x27;</code> | <code>&#x27;Thrivent&#x27;</code> | <code>&#x27;Timothy Plan&#x27;</code> | <code>&#x27;Toews Funds&#x27;</code> | <code>&#x27;Tortoise Capital Advisors&#x27;</code> | <code>&#x27;Touchstone Investments&#x27;</code> | <code>&#x27;Trajan Wealth&#x27;</code> | <code>&#x27;TrueShares&#x27;</code> | <code>&#x27;Tuttle Tactical Management&#x27;</code> | <code>&#x27;U.S. Global Investors&#x27;</code> | <code>&#x27;UBS&#x27;</code> | <code>&#x27;United States Commodity Funds&#x27;</code> | <code>&#x27;Unlimited&#x27;</code> | <code>&#x27;V-Square&#x27;</code> | <code>&#x27;Validus&#x27;</code> | <code>&#x27;Valkyrie Funds&#x27;</code> | <code>&#x27;Van Eck Associates Corporation&#x27;</code> | <code>&#x27;Vanguard&#x27;</code> | <code>&#x27;VegTech&#x27;</code> | <code>&#x27;Veridien&#x27;</code> | <code>&#x27;Vesper Capital Management&#x27;</code> | <code>&#x27;VictoryShares&#x27;</code> | <code>&#x27;Vident&#x27;</code> | <code>&#x27;Virtus ETF Solutions&#x27;</code> | <code>&#x27;Volatility Shares&#x27;</code> | <code>&#x27;Wahed Invest&#x27;</code> | <code>&#x27;WBI Shares&#x27;</code> | <code>&#x27;Wealth Trust&#x27;</code> | <code>&#x27;Wisdom Tree&#x27;</code> | <code>&#x27;X-Square ETF&#x27;</code> | <code>&#x27;Xfunds&#x27;</code> | <code>&#x27;Zacks&#x27;</code> | <code>&#x27;Zega ETF&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
+<br><a name="FinVizScreener+netExpenseRatio"></a>
+
+### fv.netExpenseRatio(filter) ⇒ <code>this</code>
+
+Gross expense net of fee waivers, as a % of net assets as published by the ETF Issuer.
+
+**Arguments**
+
+- **filter (<code>&#x27;Under 0.1%&#x27;</code> | <code>&#x27;Under 0.2%&#x27;</code> | <code>&#x27;Under 0.3%&#x27;</code> | <code>&#x27;Under 0.4%&#x27;</code> | <code>&#x27;Under 0.5%&#x27;</code> | <code>&#x27;Under 0.6%&#x27;</code> | <code>&#x27;Under 0.7%&#x27;</code> | <code>&#x27;Under 0.8%&#x27;</code> | <code>&#x27;Under 0.9%&#x27;</code> | <code>&#x27;Under 1.0%&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
+<br><a name="FinVizScreener+netFundFlows"></a>
+
+### fv.netFundFlows(filter) ⇒ <code>this</code>
+
+Net Fund Flows of the ETF as percentage of Assets Under Management
+
+**Arguments**
+
+- **filter (<code>&#x27;1 Month - Over 0%&#x27;</code> | <code>&#x27;1 Month - Over 10%&#x27;</code> | <code>&#x27;1 Month - Over 25%&#x27;</code> | <code>&#x27;1 Month - Over 50%&#x27;</code> | <code>&#x27;1 Month - Under 0%&#x27;</code> | <code>&#x27;1 Month - Under -10%&#x27;</code> | <code>&#x27;1 Month - Under -25%&#x27;</code> | <code>&#x27;1 Month - Under -50%&#x27;</code> | <code>&#x27;3 Month - Over 0%&#x27;</code> | <code>&#x27;3 Month - Over 10%&#x27;</code> | <code>&#x27;3 Month - Over 25%&#x27;</code> | <code>&#x27;3 Month - Over 50%&#x27;</code> | <code>&#x27;3 Month - Under 0%&#x27;</code> | <code>&#x27;3 Month - Under -10%&#x27;</code> | <code>&#x27;3 Month - Under -25%&#x27;</code> | <code>&#x27;3 Month - Under -50%&#x27;</code> | <code>&#x27;YTD - Over 0%&#x27;</code> | <code>&#x27;YTD - Over 10%&#x27;</code> | <code>&#x27;YTD - Over 25%&#x27;</code> | <code>&#x27;YTD - Over 50%&#x27;</code> | <code>&#x27;YTD - Under 0%&#x27;</code> | <code>&#x27;YTD - Under -10%&#x27;</code> | <code>&#x27;YTD - Under -25%&#x27;</code> | <code>&#x27;YTD - Under -50%&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
+<br><a name="FinVizScreener+annualizedReturn"></a>
+
+### fv.annualizedReturn(filter) ⇒ <code>this</code>
+
+Annualized rate of Return of the ETF.
+
+**Arguments**
+
+- **filter (<code>&#x27;1 Year - Over 0%&#x27;</code> | <code>&#x27;1 Year - Over 5%&#x27;</code> | <code>&#x27;1 Year - Over 10%&#x27;</code> | <code>&#x27;1 Year - Over 25%&#x27;</code> | <code>&#x27;1 Year - Under 0%&#x27;</code> | <code>&#x27;1 Year - Under -5%&#x27;</code> | <code>&#x27;1 Year - Under -10%&#x27;</code> | <code>&#x27;1 Year - Under -25%&#x27;</code> | <code>&#x27;3 Year - Over 0%&#x27;</code> | <code>&#x27;3 Year - Over 5%&#x27;</code> | <code>&#x27;3 Year - Over 10%&#x27;</code> | <code>&#x27;3 Year - Over 25%&#x27;</code> | <code>&#x27;3 Year - Under 0%&#x27;</code> | <code>&#x27;3 Year - Under -5%&#x27;</code> | <code>&#x27;3 Year - Under -10%&#x27;</code> | <code>&#x27;3 Year - Under -25%&#x27;</code> | <code>&#x27;5 Year - Over 0%&#x27;</code> | <code>&#x27;5 Year - Over 5%&#x27;</code> | <code>&#x27;5 Year - Over 10%&#x27;</code> | <code>&#x27;5 Year - Over 25%&#x27;</code> | <code>&#x27;5 Year - Under 0%&#x27;</code> | <code>&#x27;5 Year - Under -5%&#x27;</code> | <code>&#x27;5 Year - Under -10%&#x27;</code> | <code>&#x27;5 Year - Under -25%&#x27;</code>)** : Filter
+
+**Returns**
+
+- **<code>this</code>** : this
+
+
+<br><a name="FinVizScreener+tags"></a>
+
+### fv.tags(filter) ⇒ <code>this</code>
+
+Various ETF tags.
+
+**Arguments**
+
+- **filter (<code>&#x27;13F&#x27;</code> | <code>&#x27;3d-printing&#x27;</code> | <code>&#x27;5G&#x27;</code> | <code>&#x27;A.I.&#x27;</code> | <code>&#x27;AAPL&#x27;</code> | <code>&#x27;aerospace-defense&#x27;</code> | <code>&#x27;Africa&#x27;</code> | <code>&#x27;aggressive&#x27;</code> | <code>&#x27;agriculture&#x27;</code> | <code>&#x27;aircraft&#x27;</code> | <code>&#x27;airlines&#x27;</code> | <code>&#x27;alcohol-tobacco&#x27;</code> | <code>&#x27;AMD&#x27;</code> | <code>&#x27;AMZN&#x27;</code> | <code>&#x27;Argentina&#x27;</code> | <code>&#x27;ARKK&#x27;</code> | <code>&#x27;Asia&#x27;</code> | <code>&#x27;Asia-ex-Japan&#x27;</code> | <code>&#x27;Asia-Pacific&#x27;</code> | <code>&#x27;Asia-Pacific-ex-Japan&#x27;</code> | <code>&#x27;asset-rotation&#x27;</code> | <code>&#x27;AUD&#x27;</code> | <code>&#x27;Australia&#x27;</code> | <code>&#x27;Austria&#x27;</code> | <code>&#x27;auto-industry&#x27;</code> | <code>&#x27;automation&#x27;</code> | <code>&#x27;autonomous-vehicles&#x27;</code> | <code>&#x27;BABA&#x27;</code> | <code>&#x27;banks&#x27;</code> | <code>&#x27;batteries&#x27;</code> | <code>&#x27;BDC&#x27;</code> | <code>&#x27;Belgium&#x27;</code> | <code>&#x27;betting&#x27;</code> | <code>&#x27;big-data&#x27;</code> | <code>&#x27;biotechnology&#x27;</code> | <code>&#x27;bitcoin&#x27;</code> | <code>&#x27;blockchain&#x27;</code> | <code>&#x27;blue-chip&#x27;</code> | <code>&#x27;bonds&#x27;</code> | <code>&#x27;Brazil&#x27;</code> | <code>&#x27;brokerage&#x27;</code> | <code>&#x27;buffer&#x27;</code> | <code>&#x27;buyback&#x27;</code> | <code>&#x27;CAD&#x27;</code> | <code>&#x27;Canada&#x27;</code> | <code>&#x27;cancer&#x27;</code> | <code>&#x27;cannabis&#x27;</code> | <code>&#x27;capital-markets&#x27;</code> | <code>&#x27;carbon-allowances&#x27;</code> | <code>&#x27;carbon-low&#x27;</code> | <code>&#x27;cash-cow&#x27;</code> | <code>&#x27;casino&#x27;</code> | <code>&#x27;catholic-values&#x27;</code> | <code>&#x27;CHF&#x27;</code> | <code>&#x27;Chile&#x27;</code> | <code>&#x27;China&#x27;</code> | <code>&#x27;clean-energy&#x27;</code> | <code>&#x27;climate-change&#x27;</code> | <code>&#x27;clinical-trials&#x27;</code> | <code>&#x27;CLO&#x27;</code> | <code>&#x27;cloud-computing&#x27;</code> | <code>&#x27;cobalt&#x27;</code> | <code>&#x27;COIN&#x27;</code> | <code>&#x27;Colombia&#x27;</code> | <code>&#x27;commodity&#x27;</code> | <code>&#x27;communication-services&#x27;</code> | <code>&#x27;community-banks&#x27;</code> | <code>&#x27;conservative&#x27;</code> | <code>&#x27;consumer&#x27;</code> | <code>&#x27;consumer-discretionary&#x27;</code> | <code>&#x27;consumer-staples&#x27;</code> | <code>&#x27;convertible-securities&#x27;</code> | <code>&#x27;copper&#x27;</code> | <code>&#x27;corn&#x27;</code> | <code>&#x27;corporate-bonds&#x27;</code> | <code>&#x27;covered-call&#x27;</code> | <code>&#x27;crypto&#x27;</code> | <code>&#x27;crypto-spot&#x27;</code> | <code>&#x27;currencies&#x27;</code> | <code>&#x27;currency&#x27;</code> | <code>&#x27;currency-bonds&#x27;</code> | <code>&#x27;customer&#x27;</code> | <code>&#x27;cyber-security&#x27;</code> | <code>&#x27;data-centers&#x27;</code> | <code>&#x27;DAX&#x27;</code> | <code>&#x27;debt&#x27;</code> | <code>&#x27;debt-securities&#x27;</code> | <code>&#x27;democrats&#x27;</code> | <code>&#x27;Denmark&#x27;</code> | <code>&#x27;derivatives&#x27;</code> | <code>&#x27;Developed&#x27;</code> | <code>&#x27;Developed-ex-Japan&#x27;</code> | <code>&#x27;Developed-ex-U.S.&#x27;</code> | <code>&#x27;digital-infrastructure&#x27;</code> | <code>&#x27;digital-payments&#x27;</code> | <code>&#x27;DIS&#x27;</code> | <code>&#x27;Disaster-recovery&#x27;</code> | <code>&#x27;disruptive&#x27;</code> | <code>&#x27;dividend&#x27;</code> | <code>&#x27;dividend-growth&#x27;</code> | <code>&#x27;dividend-weight&#x27;</code> | <code>&#x27;DJIA&#x27;</code> | <code>&#x27;dry-bulk&#x27;</code> | <code>&#x27;e-commerce&#x27;</code> | <code>&#x27;e-sports&#x27;</code> | <code>&#x27;EAFE&#x27;</code> | <code>&#x27;education&#x27;</code> | <code>&#x27;Egypt&#x27;</code> | <code>&#x27;electric-vehicles&#x27;</code> | <code>&#x27;electricity&#x27;</code> | <code>&#x27;Emerging&#x27;</code> | <code>&#x27;Emerging-ex-China&#x27;</code> | <code>&#x27;energy&#x27;</code> | <code>&#x27;energy-management&#x27;</code> | <code>&#x27;energy-producers&#x27;</code> | <code>&#x27;energy-storage&#x27;</code> | <code>&#x27;entertainment&#x27;</code> | <code>&#x27;environmental&#x27;</code> | <code>&#x27;equal-weight&#x27;</code> | <code>&#x27;equity&#x27;</code> | <code>&#x27;ESG&#x27;</code> | <code>&#x27;ETFs&#x27;</code> | <code>&#x27;ethereum&#x27;</code> | <code>&#x27;EUR&#x27;</code> | <code>&#x27;Europe&#x27;</code> | <code>&#x27;Eurozone&#x27;</code> | <code>&#x27;ex-energy&#x27;</code> | <code>&#x27;ex-financial&#x27;</code> | <code>&#x27;ex-fossil-fuels&#x27;</code> | <code>&#x27;ex-healthcare&#x27;</code> | <code>&#x27;ex-technology&#x27;</code> | <code>&#x27;exchanges&#x27;</code> | <code>&#x27;factor-rotation&#x27;</code> | <code>&#x27;FANG&#x27;</code> | <code>&#x27;financial&#x27;</code> | <code>&#x27;Finland&#x27;</code> | <code>&#x27;fintech&#x27;</code> | <code>&#x27;fixed-income&#x27;</code> | <code>&#x27;fixed-period&#x27;</code> | <code>&#x27;floating-rate&#x27;</code> | <code>&#x27;food&#x27;</code> | <code>&#x27;food-beverage&#x27;</code> | <code>&#x27;fossil-fuels&#x27;</code> | <code>&#x27;France&#x27;</code> | <code>&#x27;fundamental&#x27;</code> | <code>&#x27;fundamental-weight&#x27;</code> | <code>&#x27;futures&#x27;</code> | <code>&#x27;gaming&#x27;</code> | <code>&#x27;GBP&#x27;</code> | <code>&#x27;gender&#x27;</code> | <code>&#x27;genomics&#x27;</code> | <code>&#x27;Germany&#x27;</code> | <code>&#x27;GLD&#x27;</code> | <code>&#x27;Global&#x27;</code> | <code>&#x27;Global-ex-U.S.&#x27;</code> | <code>&#x27;gold&#x27;</code> | <code>&#x27;gold-miners&#x27;</code> | <code>&#x27;GOOGL&#x27;</code> | <code>&#x27;government-bonds&#x27;</code> | <code>&#x27;Greece&#x27;</code> | <code>&#x27;growth&#x27;</code> | <code>&#x27;hardware&#x27;</code> | <code>&#x27;healthcare&#x27;</code> | <code>&#x27;hedge-currency&#x27;</code> | <code>&#x27;hedge-fund&#x27;</code> | <code>&#x27;hedge-inflation&#x27;</code> | <code>&#x27;hedge-rates&#x27;</code> | <code>&#x27;hedge-risk&#x27;</code> | <code>&#x27;high-beta&#x27;</code> | <code>&#x27;high-yield&#x27;</code> | <code>&#x27;home-construction&#x27;</code> | <code>&#x27;home-office&#x27;</code> | <code>&#x27;Honk-Kong&#x27;</code> | <code>&#x27;hotel&#x27;</code> | <code>&#x27;hydrogen&#x27;</code> | <code>&#x27;I.T.&#x27;</code> | <code>&#x27;income&#x27;</code> | <code>&#x27;India&#x27;</code> | <code>&#x27;Indonesia&#x27;</code> | <code>&#x27;industrials&#x27;</code> | <code>&#x27;inflation&#x27;</code> | <code>&#x27;infrastructure&#x27;</code> | <code>&#x27;innovation&#x27;</code> | <code>&#x27;insurance&#x27;</code> | <code>&#x27;International&#x27;</code> | <code>&#x27;internet&#x27;</code> | <code>&#x27;internet-of-things&#x27;</code> | <code>&#x27;inverse&#x27;</code> | <code>&#x27;investment-grade&#x27;</code> | <code>&#x27;IPO&#x27;</code> | <code>&#x27;Ireland&#x27;</code> | <code>&#x27;Israel&#x27;</code> | <code>&#x27;Italy&#x27;</code> | <code>&#x27;Japan&#x27;</code> | <code>&#x27;Jim-Cramer&#x27;</code> | <code>&#x27;JPM&#x27;</code> | <code>&#x27;JPY&#x27;</code> | <code>&#x27;Kuwait&#x27;</code> | <code>&#x27;large-cap&#x27;</code> | <code>&#x27;Latin-America&#x27;</code> | <code>&#x27;leadership&#x27;</code> | <code>&#x27;leverage&#x27;</code> | <code>&#x27;lifestyle&#x27;</code> | <code>&#x27;lithium&#x27;</code> | <code>&#x27;loans&#x27;</code> | <code>&#x27;long-short&#x27;</code> | <code>&#x27;luxury&#x27;</code> | <code>&#x27;M&amp;A&#x27;</code> | <code>&#x27;machine-learning&#x27;</code> | <code>&#x27;macro&#x27;</code> | <code>&#x27;Malaysia&#x27;</code> | <code>&#x27;market-sentiment&#x27;</code> | <code>&#x27;marketing&#x27;</code> | <code>&#x27;materials&#x27;</code> | <code>&#x27;MBS&#x27;</code> | <code>&#x27;media&#x27;</code> | <code>&#x27;medical&#x27;</code> | <code>&#x27;mega-cap&#x27;</code> | <code>&#x27;META&#x27;</code> | <code>&#x27;metals&#x27;</code> | <code>&#x27;metaverse&#x27;</code> | <code>&#x27;Mexico&#x27;</code> | <code>&#x27;micro-cap&#x27;</code> | <code>&#x27;mid-cap&#x27;</code> | <code>&#x27;mid-large-cap&#x27;</code> | <code>&#x27;midstream&#x27;</code> | <code>&#x27;military&#x27;</code> | <code>&#x27;millennial&#x27;</code> | <code>&#x27;miners&#x27;</code> | <code>&#x27;MLP&#x27;</code> | <code>&#x27;mobile-payments&#x27;</code> | <code>&#x27;moderate&#x27;</code> | <code>&#x27;momentum&#x27;</code> | <code>&#x27;monopolies&#x27;</code> | <code>&#x27;MSFT&#x27;</code> | <code>&#x27;multi-asset&#x27;</code> | <code>&#x27;multi-factor&#x27;</code> | <code>&#x27;multi-sector&#x27;</code> | <code>&#x27;municipal-bonds&#x27;</code> | <code>&#x27;music&#x27;</code> | <code>&#x27;Nasdaq-composite&#x27;</code> | <code>&#x27;Nasdaq100&#x27;</code> | <code>&#x27;natural-gas&#x27;</code> | <code>&#x27;natural-resources&#x27;</code> | <code>&#x27;Netherlands&#x27;</code> | <code>&#x27;network&#x27;</code> | <code>&#x27;New-Zealand&#x27;</code> | <code>&#x27;next-gen&#x27;</code> | <code>&#x27;NFLX&#x27;</code> | <code>&#x27;nickel&#x27;</code> | <code>&#x27;Nigeria&#x27;</code> | <code>&#x27;Nikkei-400&#x27;</code> | <code>&#x27;non-ESG&#x27;</code> | <code>&#x27;North-America&#x27;</code> | <code>&#x27;Norway&#x27;</code> | <code>&#x27;nuclear-energy&#x27;</code> | <code>&#x27;NVDA&#x27;</code> | <code>&#x27;ocean&#x27;</code> | <code>&#x27;oil&#x27;</code> | <code>&#x27;oil-gas-exp-prod&#x27;</code> | <code>&#x27;oil-gas-services&#x27;</code> | <code>&#x27;online-stores&#x27;</code> | <code>&#x27;options&#x27;</code> | <code>&#x27;Pakistan&#x27;</code> | <code>&#x27;palladium&#x27;</code> | <code>&#x27;patents&#x27;</code> | <code>&#x27;Peru&#x27;</code> | <code>&#x27;pet-care&#x27;</code> | <code>&#x27;pharmaceutical&#x27;</code> | <code>&#x27;philippines&#x27;</code> | <code>&#x27;physical&#x27;</code> | <code>&#x27;pipelines&#x27;</code> | <code>&#x27;platinum&#x27;</code> | <code>&#x27;Poland&#x27;</code> | <code>&#x27;politics&#x27;</code> | <code>&#x27;Portugal&#x27;</code> | <code>&#x27;precious-metals&#x27;</code> | <code>&#x27;preferred&#x27;</code> | <code>&#x27;preferred-securities&#x27;</code> | <code>&#x27;private-credit&#x27;</code> | <code>&#x27;private-equity&#x27;</code> | <code>&#x27;put-write&#x27;</code> | <code>&#x27;PYPL&#x27;</code> | <code>&#x27;quality&#x27;</code> | <code>&#x27;quantitative&#x27;</code> | <code>&#x27;quantum-computing&#x27;</code> | <code>&#x27;Quatar&#x27;</code> | <code>&#x27;R&amp;D&#x27;</code> | <code>&#x27;rare-earth&#x27;</code> | <code>&#x27;real-assets&#x27;</code> | <code>&#x27;real-estate&#x27;</code> | <code>&#x27;regional-banks&#x27;</code> | <code>&#x27;REITs&#x27;</code> | <code>&#x27;relative-strength&#x27;</code> | <code>&#x27;renewable-energy&#x27;</code> | <code>&#x27;republicans&#x27;</code> | <code>&#x27;responsible&#x27;</code> | <code>&#x27;restaurant&#x27;</code> | <code>&#x27;retail&#x27;</code> | <code>&#x27;retail-stores&#x27;</code> | <code>&#x27;revenue&#x27;</code> | <code>&#x27;rising-rates&#x27;</code> | <code>&#x27;robotics&#x27;</code> | <code>&#x27;Russell-1000&#x27;</code> | <code>&#x27;Russell-200&#x27;</code> | <code>&#x27;Russell-2000&#x27;</code> | <code>&#x27;Russell-2500&#x27;</code> | <code>&#x27;Russell-3000&#x27;</code> | <code>&#x27;Saudi-Arabia&#x27;</code> | <code>&#x27;sector-rotation&#x27;</code> | <code>&#x27;semiconductors&#x27;</code> | <code>&#x27;senior-loans&#x27;</code> | <code>&#x27;sharia-compliant&#x27;</code> | <code>&#x27;shipping&#x27;</code> | <code>&#x27;short&#x27;</code> | <code>&#x27;silver&#x27;</code> | <code>&#x27;silver-miners&#x27;</code> | <code>&#x27;Singapore&#x27;</code> | <code>&#x27;single-asset&#x27;</code> | <code>&#x27;SLV&#x27;</code> | <code>&#x27;small-cap&#x27;</code> | <code>&#x27;small-mid-cap&#x27;</code> | <code>&#x27;smart-grid&#x27;</code> | <code>&#x27;smart-mobility&#x27;</code> | <code>&#x27;social&#x27;</code> | <code>&#x27;social-media&#x27;</code> | <code>&#x27;software&#x27;</code> | <code>&#x27;solar&#x27;</code> | <code>&#x27;South-Africa&#x27;</code> | <code>&#x27;South-Korea&#x27;</code> | <code>&#x27;soybean&#x27;</code> | <code>&#x27;SP100&#x27;</code> | <code>&#x27;SP1000&#x27;</code> | <code>&#x27;SP1500&#x27;</code> | <code>&#x27;SP400&#x27;</code> | <code>&#x27;SP500&#x27;</code> | <code>&#x27;SP600&#x27;</code> | <code>&#x27;SPAC&#x27;</code> | <code>&#x27;space-exploration&#x27;</code> | <code>&#x27;Spain&#x27;</code> | <code>&#x27;spin-off&#x27;</code> | <code>&#x27;steel&#x27;</code> | <code>&#x27;sugar&#x27;</code> | <code>&#x27;sukuk&#x27;</code> | <code>&#x27;sustainability&#x27;</code> | <code>&#x27;Sweden&#x27;</code> | <code>&#x27;Switzerland&#x27;</code> | <code>&#x27;tactical&#x27;</code> | <code>&#x27;Taiwan&#x27;</code> | <code>&#x27;target-drawdown&#x27;</code> | <code>&#x27;technology&#x27;</code> | <code>&#x27;Thailand&#x27;</code> | <code>&#x27;timber&#x27;</code> | <code>&#x27;TIPS&#x27;</code> | <code>&#x27;transportation&#x27;</code> | <code>&#x27;travel&#x27;</code> | <code>&#x27;treasuries&#x27;</code> | <code>&#x27;TSLA&#x27;</code> | <code>&#x27;Turkey&#x27;</code> | <code>&#x27;U.K.&#x27;</code> | <code>&#x27;U.S.&#x27;</code> | <code>&#x27;UAE&#x27;</code> | <code>&#x27;upside-cap&#x27;</code> | <code>&#x27;upstream&#x27;</code> | <code>&#x27;uranium&#x27;</code> | <code>&#x27;uranium-miners&#x27;</code> | <code>&#x27;USD&#x27;</code> | <code>&#x27;USO&#x27;</code> | <code>&#x27;utilities&#x27;</code> | <code>&#x27;value&#x27;</code> | <code>&#x27;variable-rate&#x27;</code> | <code>&#x27;vegan&#x27;</code> | <code>&#x27;Vietnam&#x27;</code> | <code>&#x27;vix&#x27;</code> | <code>&#x27;volatility&#x27;</code> | <code>&#x27;volatility-index&#x27;</code> | <code>&#x27;volatility-weight&#x27;</code> | <code>&#x27;water&#x27;</code> | <code>&#x27;weapons&#x27;</code> | <code>&#x27;wellness&#x27;</code> | <code>&#x27;wheat&#x27;</code> | <code>&#x27;wind&#x27;</code> | <code>&#x27;wood&#x27;</code> | <code>&#x27;XOM&#x27;</code> | <code>&#x27;Yuan&#x27;</code> | <code>&#x27;zero-coupon&#x27;</code>)** : Filter
 
 **Returns**
 
