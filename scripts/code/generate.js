@@ -10,7 +10,6 @@ const ejs = require('ejs')
 
 /**
  * Dump and die helper method
- *
  * @returns {void}
  */
 const dd = function() { // eslint-disable-line
@@ -19,20 +18,32 @@ const dd = function() { // eslint-disable-line
 }
 
 // them files
-const htmlCacheFile = path.resolve('scripts/cache/fvPage.cache.html')
-const clientTmplFile = path.resolve('scripts/code/templates/client.ejs')
-const clientOutFile = path.resolve('src/finviz.js')
-const testsTmplFile = path.resolve('scripts/code/templates/tests.ejs')
-const testsOutFile = path.resolve('tests/finviz.spec.js')
+const htmlCacheFile = path.resolve(__dirname, '../../scripts/cache/fvPage.cache.html')
+const clientTmplFile = path.resolve(__dirname, '../../scripts/code/templates/client.ejs')
+const clientOutFile = path.resolve(__dirname, '../../src/finviz.js')
+const testsTmplFile = path.resolve(__dirname, '../../scripts/code/templates/tests.ejs')
+const testsOutFile = path.resolve(__dirname, '../../tests/finviz.spec.js')
 
+/**
+ *
+ */
 async function getHtml() {
     if (fs.existsSync(htmlCacheFile)) {
         return fs.readFileSync(htmlCacheFile, { encoding: 'utf8' })
     }
 
-    const { data } = await axios.get('https://finviz.com/screener.ashx?v=411&ft=4')
-    fs.writeFileSync(htmlCacheFile, data, { encoding: 'utf8' })
-    return data
+    try {
+        const { data } = await axios.get('https://finviz.com/screener.ashx?v=411&ft=4', {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            }
+        })
+        fs.writeFileSync(htmlCacheFile, data, { encoding: 'utf8' })
+        return data
+    } catch (e) {
+        console.error(e)
+        process.exit(1)
+    }
 }
 
 void (async () => {
@@ -57,7 +68,7 @@ void (async () => {
         const e = $(el)
         return {
             title: e.text(),
-            desc: e.prop('title').match(/<td class='tooltip_tab'>(.*)<\/td>/)[1],
+            desc: e.prop('data-boxover').match(/<td class='tooltip_tab'>(.*)<\/td>/)[1],
         }
     }).get()
     $props.each((idx, el) => {

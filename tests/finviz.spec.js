@@ -243,6 +243,18 @@ describe('FinVizScreener - Extended', () => {
             expect(() => fv.salesGrowthqtrOverQtr('Something Unknown')).toThrow()
         }) // test
     }) // group
+    describe('.earningsRevenueSurprise()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'fa_epsrev_bp'
+            fv.earningsRevenueSurprise('Both positive (>0%)')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.earningsRevenueSurprise('Something Unknown')).toThrow()
+        }) // test
+    }) // group
     describe('.dividendYield()', () => {
         it('should add filter value to the list', () => {
             const fv = finviz()
@@ -639,6 +651,18 @@ describe('FinVizScreener - Extended', () => {
             expect(() => fv.fiftyTwoWeekHighLow('Something Unknown')).toThrow()
         }) // test
     }) // group
+    describe('.allTimeHighLow()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'ta_alltime_nh'
+            fv.allTimeHighLow('New High')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.allTimeHighLow('Something Unknown')).toThrow()
+        }) // test
+    }) // group
     describe('.pattern()', () => {
         it('should add filter value to the list', () => {
             const fv = finviz()
@@ -781,6 +805,90 @@ describe('FinVizScreener - Extended', () => {
         it('should throw if an unknown filter is provided', () => {
             const fv = finviz()
             expect(() => fv.float('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.singleCategory()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'etf_category_bondsbroadmarket'
+            fv.singleCategory('Bonds - Broad Market')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.singleCategory('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.assetType()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'etf_assettype_bonds'
+            fv.assetType('Bonds')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.assetType('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.sponsor()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'etf_sponsor_aberdeen'
+            fv.sponsor('Aberdeen')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.sponsor('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.netExpenseRatio()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'etf_netexpense_u01'
+            fv.netExpenseRatio('Under 0.1%')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.netExpenseRatio('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.netFundFlows()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'etf_fundflows_1mo0'
+            fv.netFundFlows('1 Month - Over 0%')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.netFundFlows('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.annualizedReturn()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'etf_return_1yo0'
+            fv.annualizedReturn('1 Year - Over 0%')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.annualizedReturn('Something Unknown')).toThrow()
+        }) // test
+    }) // group
+    describe('.tags()', () => {
+        it('should add filter value to the list', () => {
+            const fv = finviz()
+            const expected = 'etf_tags_13f'
+            fv.tags('13F')
+            expect(fv._filters).toContain(expected)
+        }) // test
+        it('should throw if an unknown filter is provided', () => {
+            const fv = finviz()
+            expect(() => fv.tags('Something Unknown')).toThrow()
         }) // test
     }) // group
     describe('.signal()', () => {

@@ -33,7 +33,7 @@ export class FinVizScreener {
      * @param filter Filter
      * @returns this
      */
-    index(filter: 'S&P 500'|'DJIA'): this;
+    index(filter: 'S&P 500'|'NASDAQ 100'|'DJIA'|'RUSSELL 2000'): this;
     /**
      * The sector which a stock belongs to.
      * @param filter Filter
@@ -137,13 +137,19 @@ export class FinVizScreener {
      */
     epsGrowthqtrOverQtr(filter: 'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'): this;
     /**
-     * Quarter over quarter growth.
+     * Quarter over quarter growth compared on a year over year basis.
      * @param filter Filter
      * @returns this
      */
     salesGrowthqtrOverQtr(filter: 'Negative (<0%)'|'Positive (>0%)'|'Positive Low (0-10%)'|'High (>25%)'|'Under 5%'|'Under 10%'|'Under 15%'|'Under 20%'|'Under 25%'|'Under 30%'|'Over 5%'|'Over 10%'|'Over 15%'|'Over 20%'|'Over 25%'|'Over 30%'): this;
     /**
-     * The dividend yield equals the annual dividend per share divided by the stock’s price. This measurement tells what percentage return a company pays out to shareholders in the form of dividends.
+     * Company's reported earnings/revenue are above or below analysts' expectations.
+     * @param filter Filter
+     * @returns this
+     */
+    earningsRevenueSurprise(filter: 'Both positive (>0%)'|'Both met (0%)'|'Both negative (<0%)'): this;
+    /**
+     * The dividend yield equals the annual dividend per share divided by the stock’s price. This measurement tells what percentage return a company pays out to shareholders in the form of dividends. If there is no forward dividend estimate available, trailing twelve month (TTM) value is used.
      * @param filter Filter
      * @returns this
      */
@@ -255,7 +261,7 @@ export class FinVizScreener {
      * @param filter Filter
      * @returns this
      */
-    optionShort(filter: 'Optionable'|'Shortable'|'Optionable and shortable'): this;
+    optionShort(filter: 'Optionable'|'Shortable'|'Not optionable'|'Not shortable'|'Optionable and shortable'|'Optionable and not shortable'|'Not optionable and shortable'|'Not optionable and not shortable'): this;
     /**
      * Date when company reports earnings
      * @param filter Filter
@@ -341,6 +347,12 @@ export class FinVizScreener {
      */
     fiftyTwoWeekHighLow(filter: 'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'60% or more below High'|'70% or more below High'|'80% or more below High'|'90% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'60% or more above Low'|'70% or more above Low'|'80% or more above Low'|'90% or more above Low'|'100% or more above Low'|'120% or more above Low'|'150% or more above Low'|'200% or more above Low'|'300% or more above Low'|'500% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'): this;
     /**
+     * Maximum/minimum of all-time highs/lows.
+     * @param filter Filter
+     * @returns this
+     */
+    allTimeHighLow(filter: 'New High'|'New Low'|'5% or more below High'|'10% or more below High'|'15% or more below High'|'20% or more below High'|'30% or more below High'|'40% or more below High'|'50% or more below High'|'60% or more below High'|'70% or more below High'|'80% or more below High'|'90% or more below High'|'0-3% below High'|'0-5% below High'|'0-10% below High'|'5% or more above Low'|'10% or more above Low'|'15% or more above Low'|'20% or more above Low'|'30% or more above Low'|'40% or more above Low'|'50% or more above Low'|'60% or more above Low'|'70% or more above Low'|'80% or more above Low'|'90% or more above Low'|'100% or more above Low'|'120% or more above Low'|'150% or more above Low'|'200% or more above Low'|'300% or more above Low'|'500% or more above Low'|'0-3% above Low'|'0-5% above Low'|'0-10% above Low'): this;
+    /**
      * A chart pattern is a distinct formation on a stock chart that creates a trading signal, or a sign of future price movements. Chartists use these patterns to identify current trends and trend reversals and to trigger buy and sell signals.
      * @param filter Filter
      * @returns this
@@ -381,7 +393,7 @@ export class FinVizScreener {
      * @param filter Filter
      * @returns this
      */
-    currentVolume(filter: 'Under 50K'|'Under 100K'|'Under 500K'|'Under 750K'|'Under 1M'|'Over 0'|'Over 50K'|'Over 100K'|'Over 200K'|'Over 300K'|'Over 400K'|'Over 500K'|'Over 750K'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'): this;
+    currentVolume(filter: 'Under 50K'|'Under 100K'|'Under 500K'|'Under 750K'|'Under 1M'|'Over 0'|'Over 50K'|'Over 100K'|'Over 200K'|'Over 300K'|'Over 400K'|'Over 500K'|'Over 750K'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'|'Over 50% shares float'|'Over 100% shares float'): this;
     /**
      * The current stock price.
      * @param filter Filter
@@ -411,7 +423,49 @@ export class FinVizScreener {
      * @param filter Filter
      * @returns this
      */
-    float(filter: 'Under 1M'|'Under 5M'|'Under 10M'|'Under 20M'|'Under 50M'|'Under 100M'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'|'Over 50M'|'Over 100M'|'Over 200M'|'Over 500M'|'Over 1000M'): this;
+    float(filter: 'Under 1M'|'Under 5M'|'Under 10M'|'Under 20M'|'Under 50M'|'Under 100M'|'Over 1M'|'Over 2M'|'Over 5M'|'Over 10M'|'Over 20M'|'Over 50M'|'Over 100M'|'Over 200M'|'Over 500M'|'Over 1000M'|'Under 10%'|'Under 20%'|'Under 30%'|'Under 40%'|'Under 50%'|'Under 60%'|'Under 70%'|'Under 80%'|'Under 90%'|'Over 10%'|'Over 20%'|'Over 30%'|'Over 40%'|'Over 50%'|'Over 60%'|'Over 70%'|'Over 80%'|'Over 90%'): this;
+    /**
+     * Single category of each ETF.
+     * @param filter Filter
+     * @returns this
+     */
+    singleCategory(filter: 'Bonds - Broad Market'|'Bonds - Convertible'|'Bonds - Corporate'|'Bonds - Inflation protected'|'Bonds - Leveraged / Inverse'|'Bonds - Mortgage'|'Bonds - Municipal'|'Bonds - Non Government Asset Backed Securities'|'Bonds - Treasury & Government'|'Commodities & Metals - Agricultural'|'Commodities & Metals - Diversified Commodities'|'Commodities & Metals - Energy'|'Commodities & Metals - Gold / Metals'|'Commodities & Metals - Leveraged / Inverse'|'Currency'|'Currency - Leveraged / Inverse'|'Equity - Leveraged / Inverse'|'Global or ExUS Equities - Broad / Regional'|'Global or ExUS Equities - Country Specific'|'Global or ExUS Equities - Dividend & Fundamental'|'Global or ExUS Equities - Factor & Thematic'|'Global or ExUS Equities - Industry Sector'|'Global or ExUS Equities - Quant Strat'|'Other Asset Types - Leveraged / Inverse'|'Other Asset Types - Multi-Asset / Other'|'Target Date / Multi-Asset - Leveraged / Inverse'|'Target Date / Multi-Asset - Other'|'US Equities - Broad Market & Size'|'US Equities - Dividend & Fundamental'|'US Equities - Factor & Thematic'|'US Equities - Industry Sector'|'US Equities - Quant Strat'|'US Equities - US Style'): this;
+    /**
+     * The asset type of the ETF.
+     * @param filter Filter
+     * @returns this
+     */
+    assetType(filter: 'Bonds'|'Carbon Trading'|'Closed End Funds'|'Commodities & Metals'|'CryptoCurrency'|'Currency'|'Equities (Stocks)'|'Equities (Stocks) - IPO Based'|'Freight Futures'|'Hedge Fund Replication'|'MLP'|'Multi-Asset - Conservative'|'Multi-Asset - Growth / Aggressive'|'Multi-Asset - Moderate'|'Multi-Asset - Tactical / Active'|'Preferred Stock'|'Private Equity'|'SPAC'): this;
+    /**
+     * The fund manager (ETF) or issuing bank (ETN).
+     * @param filter Filter
+     * @returns this
+     */
+    sponsor(filter: 'Aberdeen'|'Absolute Investment Advisers'|'Academy AM'|'Acquirers Funds'|'Acruence Capital'|'ACSI Funds'|'ACV ETF'|'Adaptiv'|'ADAPTIVE INVESTMENTS'|'Adasina Social Capital'|'Advisor Shares'|'Advisors Asset Management'|'Advocate Capital Management'|'AGFiQ'|'Alexis Invests'|'Alger'|'AllianceBernstein'|'AllianzIM'|'Alpha Architect'|'AlphaMark'|'ALPS'|'Altrius Capital'|'AltShares'|'American Beacon'|'American Century Investments'|'Amplify Investments'|'Angel Oak'|'AOT INVEST'|'Applied Finance Funds'|'Aptus Capital Advisors'|'Argent Capital Management'|'ARK Funds'|'Armada ETF Advisors'|'ArrowShares'|'Astoria'|'ASYMshares'|'ATAC Funds'|'Avantis Investors'|'AXS Investments'|'Aztlan'|'BAD Investment'|'Bahl & Gaynor'|'Ballast AM'|'Barclays'|'Barclays iPath'|'Beacon'|'Beyond Investing'|'Bitwise'|'Blackrock (iShares)'|'Blueprint Fund Management'|'BNY Mellon'|'BondBloxx'|'Bridges Capital'|'Bridgeway'|'Brookstone'|'Build Asset Management'|'Burney Investment'|'Bushido Capital'|'Cabana ETF'|'Calamos Investments'|'Cambiar Investors'|'Cambria Funds'|'Capital Group'|'Carbon Collective'|'Carbon Fund Advisors'|'CBOE Vest'|'Changebridge Capital'|'Clockwise Capital'|'Clouty'|'CNIC Funds'|'Columbia Management'|'Conductor ETF'|'Congress AMC'|'Convergence Investment Partners'|'ConvexityShares'|'CornerCap'|'Counterpoint Mutual Funds'|'Credit Suisse'|'CrossingBridge'|'Cultivar Funds'|'Davis Advisors'|'Day Hagan'|'Days Global Advisors'|'Defiance ETFs'|'Democracy Investments'|'Dimensional'|'Direxion Shares'|'Discipline Fund'|'Distillate Capital'|'DoubleLine Funds'|'DriveWealth'|'DWS'|'Dynamic Shares'|'Ecofin'|'Element Funds'|'Elevate Shares'|'Engine No. 1'|'EntrepreneurShares'|'Envestnet'|'ETF Managers Group'|'Euclid ETF'|'Evoke Advisors'|'Exchange Traded Concepts'|'F/m Investments'|'Fairlead Strategies'|'FCF Advisors'|'Federated Hermes'|'Fidelity'|'First Manhattan'|'First Pacific Advisors'|'First Trust'|'FIS'|'Flexshares (Northern Trust)'|'FolioBeyond'|'Formidable Funds'|'FormulaFolio Investments'|'Franklin Templeton'|'Freedom Day'|'FundX'|'Future Funds'|'Gadsden'|'GAMCO Investors'|'Gavekal Capital'|'Global X'|'God Bless'|'Goldman Sachs'|'Goose Hollow'|'Gotham ETF'|'GraniteShares'|'Grayscale'|'Grizzle'|'Guru Focus'|'Harbor Funds'|'Hartford Funds'|'Hashdex'|'Hennessy Funds'|'Horizon Kinetics'|'Howard Capital Management'|'Hoya Capital'|'Humankind'|'Hypatia Capital'|'iMGP Global Partner'|'Impact Shares'|'Index IQ'|'Infrastructure Capital Advisors'|'Innovative Portfolios'|'Innovator Management'|'Inspire Investing'|'Invesco'|'Ionic Capital Management'|'Jacob Funds'|'Janus'|'John Hancock Funds'|'JPMorgan Chase'|'Kaiju ETF Advisors'|'Kelly ETFs'|'Kingsbarn Capital'|'Kovitz'|'Krane Shares'|'Laffer Tengler'|'LeaderShares'|'Leatherback Asset Management'|'Leuthold Group'|'Liquid Strategies'|'Little Harbor Advisors'|'Logan Capital'|'Lyrical AM'|'Madison Funds'|'Main Management'|'Mairs & Power'|'Matthews Asia'|'MAX ETNs'|'McElhenny Sheffield'|'Meet Kevin'|'Merk Investments'|'Merlyn AI'|'MicroSectors'|'MKAM ETF'|'MOHR Funds'|'Monarch Funds'|'Morgan Dempsey'|'Morgan Stanley'|'Motley Fool Asset Management'|'MUSQ'|'Nationwide'|'Natixis'|'NEOS Funds'|'Neuberger Berman'|'NEWDAY'|'Nuveen'|'OneAscent Investments'|'Optimize Advisors'|'Pacer Financial'|'Panagram'|'Parabla'|'Paralel Advisors'|'PGIM Investments'|'PIMCO'|'Pinnacle Dynamic Funds'|'PMV Capital'|'Point Bridge Capital'|'Principal Financial Services'|'ProcureAM'|'ProShares'|'Putnam Investments'|'Q3 All-Season'|'Qraft Technologies'|'R3 Global Capital'|'Rareview Funds'|'Rayliant'|'Reflection Asset Management'|'Regents Park Funds'|'Relative Sentiment'|'Renaissance'|'Returned Stack'|'Reverb'|'Robinson Capital'|'ROC Investments'|'Roundhill Financial'|'Running Oak'|'Saba Capital'|'Schwab'|'Segall Bryant & Hamill'|'SEI Investments Company'|'Simplify ETF'|'Siren ETF'|'SmartETFs'|'Sofi'|'SonicShares'|'Sound ETF'|'Soundwatch'|'Sparkline Capital'|'Spear Invest'|'SPFunds'|'Spinnaker ETF Trust'|'Sprott Asset Management'|'State Street (SPDR)'|'Sterling Capital'|'STF Management'|'Strategas Asset Management'|'Strategy Shares'|'Strive Asset Management'|'Subversive ETFs'|'Summit Global Investments'|'SWAN Global Investments'|'Syntax'|'T. Rowe Price'|'Tactical Advantage'|'Tema'|'Teucrium'|'Texas Capital'|'THOR Financial Technologies'|'Thrivent'|'Timothy Plan'|'Toews Funds'|'Tortoise Capital Advisors'|'Touchstone Investments'|'Trajan Wealth'|'TrueShares'|'Tuttle Tactical Management'|'U.S. Global Investors'|'UBS'|'United States Commodity Funds'|'Unlimited'|'V-Square'|'Validus'|'Valkyrie Funds'|'Van Eck Associates Corporation'|'Vanguard'|'VegTech'|'Veridien'|'Vesper Capital Management'|'VictoryShares'|'Vident'|'Virtus ETF Solutions'|'Volatility Shares'|'Wahed Invest'|'WBI Shares'|'Wealth Trust'|'Wisdom Tree'|'X-Square ETF'|'Xfunds'|'Zacks'|'Zega ETF'): this;
+    /**
+     * Gross expense net of fee waivers, as a % of net assets as published by the ETF Issuer.
+     * @param filter Filter
+     * @returns this
+     */
+    netExpenseRatio(filter: 'Under 0.1%'|'Under 0.2%'|'Under 0.3%'|'Under 0.4%'|'Under 0.5%'|'Under 0.6%'|'Under 0.7%'|'Under 0.8%'|'Under 0.9%'|'Under 1.0%'): this;
+    /**
+     * Net Fund Flows of the ETF as percentage of Assets Under Management
+     * @param filter Filter
+     * @returns this
+     */
+    netFundFlows(filter: '1 Month - Over 0%'|'1 Month - Over 10%'|'1 Month - Over 25%'|'1 Month - Over 50%'|'1 Month - Under 0%'|'1 Month - Under -10%'|'1 Month - Under -25%'|'1 Month - Under -50%'|'3 Month - Over 0%'|'3 Month - Over 10%'|'3 Month - Over 25%'|'3 Month - Over 50%'|'3 Month - Under 0%'|'3 Month - Under -10%'|'3 Month - Under -25%'|'3 Month - Under -50%'|'YTD - Over 0%'|'YTD - Over 10%'|'YTD - Over 25%'|'YTD - Over 50%'|'YTD - Under 0%'|'YTD - Under -10%'|'YTD - Under -25%'|'YTD - Under -50%'): this;
+    /**
+     * Annualized rate of Return of the ETF.
+     * @param filter Filter
+     * @returns this
+     */
+    annualizedReturn(filter: '1 Year - Over 0%'|'1 Year - Over 5%'|'1 Year - Over 10%'|'1 Year - Over 25%'|'1 Year - Under 0%'|'1 Year - Under -5%'|'1 Year - Under -10%'|'1 Year - Under -25%'|'3 Year - Over 0%'|'3 Year - Over 5%'|'3 Year - Over 10%'|'3 Year - Over 25%'|'3 Year - Under 0%'|'3 Year - Under -5%'|'3 Year - Under -10%'|'3 Year - Under -25%'|'5 Year - Over 0%'|'5 Year - Over 5%'|'5 Year - Over 10%'|'5 Year - Over 25%'|'5 Year - Under 0%'|'5 Year - Under -5%'|'5 Year - Under -10%'|'5 Year - Under -25%'): this;
+    /**
+     * Various ETF tags.
+     * @param filter Filter
+     * @returns this
+     */
+    tags(filter: '13F'|'3d-printing'|'5G'|'A.I.'|'AAPL'|'aerospace-defense'|'Africa'|'aggressive'|'agriculture'|'aircraft'|'airlines'|'alcohol-tobacco'|'AMD'|'AMZN'|'Argentina'|'ARKK'|'Asia'|'Asia-ex-Japan'|'Asia-Pacific'|'Asia-Pacific-ex-Japan'|'asset-rotation'|'AUD'|'Australia'|'Austria'|'auto-industry'|'automation'|'autonomous-vehicles'|'BABA'|'banks'|'batteries'|'BDC'|'Belgium'|'betting'|'big-data'|'biotechnology'|'bitcoin'|'blockchain'|'blue-chip'|'bonds'|'Brazil'|'brokerage'|'buffer'|'buyback'|'CAD'|'Canada'|'cancer'|'cannabis'|'capital-markets'|'carbon-allowances'|'carbon-low'|'cash-cow'|'casino'|'catholic-values'|'CHF'|'Chile'|'China'|'clean-energy'|'climate-change'|'clinical-trials'|'CLO'|'cloud-computing'|'cobalt'|'COIN'|'Colombia'|'commodity'|'communication-services'|'community-banks'|'conservative'|'consumer'|'consumer-discretionary'|'consumer-staples'|'convertible-securities'|'copper'|'corn'|'corporate-bonds'|'covered-call'|'crypto'|'crypto-spot'|'currencies'|'currency'|'currency-bonds'|'customer'|'cyber-security'|'data-centers'|'DAX'|'debt'|'debt-securities'|'democrats'|'Denmark'|'derivatives'|'Developed'|'Developed-ex-Japan'|'Developed-ex-U.S.'|'digital-infrastructure'|'digital-payments'|'DIS'|'Disaster-recovery'|'disruptive'|'dividend'|'dividend-growth'|'dividend-weight'|'DJIA'|'dry-bulk'|'e-commerce'|'e-sports'|'EAFE'|'education'|'Egypt'|'electric-vehicles'|'electricity'|'Emerging'|'Emerging-ex-China'|'energy'|'energy-management'|'energy-producers'|'energy-storage'|'entertainment'|'environmental'|'equal-weight'|'equity'|'ESG'|'ETFs'|'ethereum'|'EUR'|'Europe'|'Eurozone'|'ex-energy'|'ex-financial'|'ex-fossil-fuels'|'ex-healthcare'|'ex-technology'|'exchanges'|'factor-rotation'|'FANG'|'financial'|'Finland'|'fintech'|'fixed-income'|'fixed-period'|'floating-rate'|'food'|'food-beverage'|'fossil-fuels'|'France'|'fundamental'|'fundamental-weight'|'futures'|'gaming'|'GBP'|'gender'|'genomics'|'Germany'|'GLD'|'Global'|'Global-ex-U.S.'|'gold'|'gold-miners'|'GOOGL'|'government-bonds'|'Greece'|'growth'|'hardware'|'healthcare'|'hedge-currency'|'hedge-fund'|'hedge-inflation'|'hedge-rates'|'hedge-risk'|'high-beta'|'high-yield'|'home-construction'|'home-office'|'Honk-Kong'|'hotel'|'hydrogen'|'I.T.'|'income'|'India'|'Indonesia'|'industrials'|'inflation'|'infrastructure'|'innovation'|'insurance'|'International'|'internet'|'internet-of-things'|'inverse'|'investment-grade'|'IPO'|'Ireland'|'Israel'|'Italy'|'Japan'|'Jim-Cramer'|'JPM'|'JPY'|'Kuwait'|'large-cap'|'Latin-America'|'leadership'|'leverage'|'lifestyle'|'lithium'|'loans'|'long-short'|'luxury'|'M&A'|'machine-learning'|'macro'|'Malaysia'|'market-sentiment'|'marketing'|'materials'|'MBS'|'media'|'medical'|'mega-cap'|'META'|'metals'|'metaverse'|'Mexico'|'micro-cap'|'mid-cap'|'mid-large-cap'|'midstream'|'military'|'millennial'|'miners'|'MLP'|'mobile-payments'|'moderate'|'momentum'|'monopolies'|'MSFT'|'multi-asset'|'multi-factor'|'multi-sector'|'municipal-bonds'|'music'|'Nasdaq-composite'|'Nasdaq100'|'natural-gas'|'natural-resources'|'Netherlands'|'network'|'New-Zealand'|'next-gen'|'NFLX'|'nickel'|'Nigeria'|'Nikkei-400'|'non-ESG'|'North-America'|'Norway'|'nuclear-energy'|'NVDA'|'ocean'|'oil'|'oil-gas-exp-prod'|'oil-gas-services'|'online-stores'|'options'|'Pakistan'|'palladium'|'patents'|'Peru'|'pet-care'|'pharmaceutical'|'philippines'|'physical'|'pipelines'|'platinum'|'Poland'|'politics'|'Portugal'|'precious-metals'|'preferred'|'preferred-securities'|'private-credit'|'private-equity'|'put-write'|'PYPL'|'quality'|'quantitative'|'quantum-computing'|'Quatar'|'R&D'|'rare-earth'|'real-assets'|'real-estate'|'regional-banks'|'REITs'|'relative-strength'|'renewable-energy'|'republicans'|'responsible'|'restaurant'|'retail'|'retail-stores'|'revenue'|'rising-rates'|'robotics'|'Russell-1000'|'Russell-200'|'Russell-2000'|'Russell-2500'|'Russell-3000'|'Saudi-Arabia'|'sector-rotation'|'semiconductors'|'senior-loans'|'sharia-compliant'|'shipping'|'short'|'silver'|'silver-miners'|'Singapore'|'single-asset'|'SLV'|'small-cap'|'small-mid-cap'|'smart-grid'|'smart-mobility'|'social'|'social-media'|'software'|'solar'|'South-Africa'|'South-Korea'|'soybean'|'SP100'|'SP1000'|'SP1500'|'SP400'|'SP500'|'SP600'|'SPAC'|'space-exploration'|'Spain'|'spin-off'|'steel'|'sugar'|'sukuk'|'sustainability'|'Sweden'|'Switzerland'|'tactical'|'Taiwan'|'target-drawdown'|'technology'|'Thailand'|'timber'|'TIPS'|'transportation'|'travel'|'treasuries'|'TSLA'|'Turkey'|'U.K.'|'U.S.'|'UAE'|'upside-cap'|'upstream'|'uranium'|'uranium-miners'|'USD'|'USO'|'utilities'|'value'|'variable-rate'|'vegan'|'Vietnam'|'vix'|'volatility'|'volatility-index'|'volatility-weight'|'water'|'weapons'|'wellness'|'wheat'|'wind'|'wood'|'XOM'|'Yuan'|'zero-coupon'): this;
     /**
      * TA Signal
      * @param signal TA signal

@@ -3,7 +3,6 @@
 const axios = require('axios').default
 const rateLimit = require('axios-rate-limit')
 const cheerio = require('cheerio')
-const selector = '#screener-content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span'
 
 /**
  * @typedef {object} Options
@@ -50,7 +49,6 @@ class FinVizScreener {
 
     /**
      * Scan for stocks.
-     *
      * @returns {Promise<string[]>} List of stock tickers
      */
     async scan() {
@@ -65,15 +63,20 @@ class FinVizScreener {
             cancel = this.options.pageLimit !== 0 && ++counter >= this.options.pageLimit
 
             // fetch tickers
-            const res = await this._axios.get(nextPage, { params })
+            const res = await this._axios.get(nextPage, { params,
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+                }})
             const $ = cheerio.load(res.data)
-            tickers = tickers.concat($(selector).map((i, el) => $(el).text().trim()).get())
+            tickers = tickers.concat(
+                $('#screener-table > td > table > tbody > tr > td').text().split(' ')
+                    .map(t => t.trim())
+                    .filter(t => t.length > 0)
+            )
 
             // find next page
             const $nextPage = $('.screener_pagination').children().last()
-            nextPage = $nextPage.children().first().text().includes('next')
-                ? $nextPage.prop('href')
-                : ''
+            nextPage = $nextPage.hasClass('is-next') ? $nextPage.prop('href') : ''
         } while(nextPage && ! cancel)
 
         return tickers
